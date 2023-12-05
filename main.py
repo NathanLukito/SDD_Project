@@ -1,5 +1,5 @@
 import pygame
-
+import sys
 grids = 20
 white = (255, 255, 255)
 black = (0, 0, 0)
@@ -8,34 +8,33 @@ select = (255, 0, 0)
 
 images = {}
 
-def loadImages():
+def loadBuildings():
     buildings = ['bN','bB','bK','bp','bQ']
     for i in buildings:
         images[i] = pygame.transform.scale(pygame.image.load('buildings/' + i + '.png'),(sqSize,sqSize))
 
 board = [['--'] * 20 for _ in range(20)]
-board[1][1] = "bK"
+board[5][5] = "bK"
 
-
+start_button = pygame.image.load("buttons/start_button.jpeg")
+load_button = pygame.image.load("buttons/load_button.jpeg")
+high_scores_button = pygame.image.load("buttons/high_scores_button.jpeg")
+exit_button = pygame.image.load("buttons/exit_button.jpeg")
 
 pygame.init()
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 width, height = screen.get_width(), screen.get_height()
 sqSize = min(width, height) // grids
 
-# Offset to center the baord
 offset_x = (width - grids * sqSize) // 2
 offset_y = (height - grids * sqSize) // 2
 
-pygame.display.set_caption("Gamering Time")
-
-exit_button_rect = pygame.Rect(10, 10, 100, 50) #Sizing the button
-exit_button_color = (255, 0, 0) #Red color
-exit_button_text = pygame.font.Font(None, 36).render("Exit", True, white)
-
+exit_game_rect = pygame.Rect(10, 10, 100, 50) #Sizing the button
+exit_game_color = (255, 0, 0) #Red color
+exit_game_text = pygame.font.Font(None, 36).render("Exit", True, white)
 def draw_exit_button():
-    pygame.draw.rect(screen, exit_button_color, exit_button_rect)
-    screen.blit(exit_button_text, (exit_button_rect.centerx - exit_button_text.get_width() // 2, exit_button_rect.centery - exit_button_text.get_height() // 2))
+    pygame.draw.rect(screen, exit_game_color, exit_game_rect)
+    screen.blit(exit_game_text, (exit_game_rect.centerx - exit_game_text.get_width() // 2, exit_game_rect.centery - exit_game_text.get_height() // 2))
 
 def drawBuildings(screen, board):
     for row in range(grids):
@@ -45,6 +44,16 @@ def drawBuildings(screen, board):
                 x = offset_x + col * sqSize
                 y = offset_y + row * sqSize
                 screen.blit(images[building], pygame.Rect(x, y, sqSize, sqSize))
+
+def loadBackground():
+    background_image = pygame.image.load("background/background.jpeg")
+    background_image = pygame.transform.scale(background_image, (width, height))
+    return background_image
+
+def loadTitle():
+    title_image = pygame.image.load("background/title.jpeg")
+    title_rect = title_image.get_rect(topleft=(screen.get_width()//2 - title_image.get_width() // 2, 50))
+    return title_image,title_rect
 
 def drawBoard(selectedSquare):
     screen.fill(black)
@@ -63,11 +72,66 @@ def drawBoard(selectedSquare):
     draw_exit_button()
     pygame.display.flip()
 
-def main():
-    loadImages()
+def drawMenu():
+    screen.blit(loadBackground(), (0, 0))
+    title_image, title_rect = loadTitle()
+    screen.blit(title_image, title_rect)
+    total_button_height = (start_button.get_height() + load_button.get_height() + high_scores_button.get_height() + exit_button.get_height())
+
+    start_y = (screen.get_height() - total_button_height) // 2
+    center_x = screen.get_width() // 2
+
+    start_button_rect = start_button.get_rect(topleft=(center_x - start_button.get_width() // 2, start_y))
+    load_button_rect = load_button.get_rect(topleft=(center_x - load_button.get_width() // 2, start_y + start_button.get_height()))
+    high_scores_button_rect = high_scores_button.get_rect(topleft=(center_x - high_scores_button.get_width() // 2, start_y + start_button.get_height() + load_button.get_height()))
+    exit_button_rect = exit_button.get_rect(topleft=(center_x - exit_button.get_width() // 2, start_y + start_button.get_height() + load_button.get_height() + high_scores_button.get_height()))
+    screen.blit(start_button, start_button_rect)
+    screen.blit(load_button, load_button_rect)
+    screen.blit(high_scores_button, high_scores_button_rect)
+    screen.blit(exit_button, exit_button_rect)
+
+    pygame.display.flip()
+    return start_button_rect,load_button_rect,high_scores_button_rect,exit_button_rect
+
+def new_game(load = False):
     selectedSquare = None
+    if load:
+        try:
+            #from save_game import game_details
+            #field, game_vars,defenders,monsters,lawn_mower = game_details()
+            #return field,game_vars,defenders,monsters,lawn_mower
+            pass
+        except:
+            pass
+    while True:
+        drawBoard(selectedSquare)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = event.pos
+                col = (mouse_x - offset_x) // sqSize
+                row = (mouse_y - offset_y) // sqSize
+                if exit_game_rect.collidepoint(mouse_x, mouse_y):
+                    return
+                else:
+                    selectedSquare = (col, row)
+                    print(selectedSquare)
+                    pass
+        drawBoard(selectedSquare)
+
+
+
+    return
+
+def show_score():
+    return
+
+def main():
+    loadBuildings()
     running = True
     while running:
+        start_button_rect,load_button_rect,high_score_button_rect,exit_button_rect = drawMenu()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -75,14 +139,14 @@ def main():
                 mouse_x, mouse_y = event.pos
                 col = (mouse_x - offset_x) // sqSize
                 row = (mouse_y - offset_y) // sqSize
-                selectedSquare = (col, row)
-                print(selectedSquare)
-                if exit_button_rect.collidepoint(mouse_x, mouse_y):
+                if start_button_rect.collidepoint(mouse_x,mouse_y):
+                    new_game(False)
+                elif load_button_rect.collidepoint(mouse_x, mouse_y):
+                    new_game(True)
+                elif high_score_button_rect.collidepoint(mouse_x,mouse_y):
+                    show_score()
+                elif exit_button_rect.collidepoint(mouse_x,mouse_y):
                     running = False
-                else:
-                    selectedSquare = (col, row)
-                    drawBoard(selectedSquare)
-
-        drawBoard(selectedSquare)
+                    pygame.quit()
 
 main()
