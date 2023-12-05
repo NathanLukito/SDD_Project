@@ -51,7 +51,7 @@ def loadBackground():
     return background_image
 
 def loadTitle():
-    title_image = pygame.image.load("background/title.jpeg")
+    title_image = pygame.image.load("background/title.png")
     title_rect = title_image.get_rect(topleft=(screen.get_width()//2 - title_image.get_width() // 2, 50))
     return title_image,title_rect
 
