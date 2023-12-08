@@ -97,11 +97,11 @@ def new_game(load = False):
     selectedSquare = None
     if load:
         try:
-            #from save_game import game_details
-            #field, game_vars,defenders,monsters,lawn_mower = game_details()
-            #return field,game_vars,defenders,monsters,lawn_mower
-            pass
+            from save_game import game_details
+            board = game_details()
+            print(board)
         except:
+            print("No saved game")
             pass
     while True:
         drawBoard(selectedSquare)
