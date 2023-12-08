@@ -14,7 +14,7 @@ def loadBuildings():
         images[i] = pygame.transform.scale(pygame.image.load('buildings/' + i + '.png'),(sqSize,sqSize))
 
 board = [['--'] * 20 for _ in range(20)]
-board[5][5] = "bK"
+
 
 start_button = pygame.image.load("buttons/start_button.jpeg")
 load_button = pygame.image.load("buttons/load_button.jpeg")
@@ -95,6 +95,7 @@ def drawMenu():
 
 def new_game(load = False):
     selectedSquare = None
+    global board
     if load:
         try:
             from save_game import game_details
@@ -119,9 +120,6 @@ def new_game(load = False):
                     print(selectedSquare)
                     pass
         drawBoard(selectedSquare)
-
-
-
     return
 
 def show_score():
