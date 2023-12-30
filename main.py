@@ -4,7 +4,8 @@ grids = 20
 white = (255, 255, 255)
 black = (0, 0, 0)
 select = (255, 0, 0)
-
+coins = 16
+points = 0
 
 images = {}
 
@@ -29,8 +30,8 @@ sqSize = min(width, height) // grids
 offset_x = (width - grids * sqSize) // 2
 offset_y = (height - grids * sqSize) // 2
 
-exit_game_rect = pygame.Rect(10, 10, 100, 50) #Sizing the button
-exit_game_color = (255, 0, 0) #Red color
+exit_game_rect = pygame.Rect(10, 10, 100, 50)
+exit_game_color = (255, 0, 0)
 exit_game_text = pygame.font.Font(None, 36).render("Exit", True, white)
 def draw_exit_button():
     pygame.draw.rect(screen, exit_game_color, exit_game_rect)
@@ -92,10 +93,91 @@ def drawMenu():
 
     pygame.display.flip()
     return start_button_rect,load_button_rect,high_scores_button_rect,exit_button_rect
+def calculatePoints():
+    turn_points = 0
+    turn_coins = 0
+    rows = len(board)
+    cols = len(board[0])
+    def check_position(i, x):
+        return 0 <= i < rows and 0 <= x < cols
+
+    def add_points(i, x, building, points):
+        if check_position(i, x) and board[i][x] == building:
+            nonlocal turn_points
+            turn_points += points
+        else:
+            pass
+    def add_coins(i, x, building, coins):
+        if check_position(i, x) and board[i][x] == building:
+            nonlocal turn_coins
+            turn_coins += coins
+        else:
+            pass
+
+    for i in range(rows):
+        for x in range(cols):
+            if board[i][x] == 'Re':
+                add_points(i, x + 1, 'In', 1)
+                add_points(i, x - 1, 'In', 1)
+                add_points(i + 1, x, 'In', 1)
+                add_points(i - 1, x, 'In', 1)
+                add_points(i - 1, x - 1, 'In', 1)
+                add_points(i - 1, x + 1, 'In', 1)
+                add_points(i + 1, x - 1, 'In', 1)
+                add_points(i + 1, x + 1, 'In', 1)
+                add_points(i, x + 1, 'Re', 1)
+                add_points(i, x - 1, 'Re', 1)
+                add_points(i + 1, x, 'Re', 1)
+                add_points(i - 1, x, 'Re', 1)
+                add_points(i, x + 1, 'Co', 1)
+                add_points(i, x - 1, 'Co', 1)
+                add_points(i + 1, x, 'Co', 1)
+                add_points(i - 1, x, 'Co', 1)
+                add_points(i, x + 1, 'Pa', 2)
+                add_points(i, x - 1, 'Pa', 2)
+                add_points(i + 1, x, 'Pa', 2)
+                add_points(i - 1, x, 'Pa', 2)
+
+            if board[i][x] == 'In':
+                turn_points += 1
+                add_coins(i, x + 1, 'Re', 1)
+                add_coins(i, x - 1, 'Re', 1)
+                add_coins(i + 1, x, 'Re', 1)
+                add_coins(i - 1, x, 'Re', 1)
+
+            if board[i][x] == 'Co':
+                add_points(i, x + 1, 'Co', 1)
+                add_points(i, x - 1, 'Co', 1)
+                add_points(i + 1, x, 'Co', 1)
+                add_points(i - 1, x, 'Co', 1)
+
+                add_coins(i, x + 1, 'Re', 1)
+                add_coins(i, x - 1, 'Re', 1)
+                add_coins(i + 1, x, 'Re', 1)
+                add_coins(i - 1, x, 'Re', 1)
+
+            if board[i][x] == 'Pa':
+                add_points(i, x + 1, 'Pa', 1)
+                add_points(i, x - 1, 'Pa', 1)
+                add_points(i + 1, x, 'Pa', 1)
+                add_points(i - 1, x, 'Pa', 1)
+
+            if board[i][x] == 'Ro':
+                for a in range(cols):
+                    add_points(i, x + a, 'Ro', 1)
+            else:
+                pass
+    global points
+    global coins
+
+    points += turn_points
+    coins += turn_coins
+    return
 
 def new_game(load = False):
     selectedSquare = None
     global board
+    global coins
     if load:
         try:
             from save_game import game_details
@@ -117,9 +199,10 @@ def new_game(load = False):
                     return
                 else:
                     selectedSquare = (col, row)
-                    print(selectedSquare)
-                    pass
+
         drawBoard(selectedSquare)
+        coins = coins - 1
+        calculatePoints()
     return
 
 def show_score():
