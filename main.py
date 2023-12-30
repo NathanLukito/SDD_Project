@@ -8,6 +8,19 @@ select = (255, 0, 0)
 
 images = {}
 
+class Building:
+    def __init__(self, building_type, row, col, cost = 1):
+        self.building_type = building_type
+        self.row = row
+        self.col = col
+        self.cost = cost
+
+class Player:
+    def __init__(self, name, coins = 16, score = 0):
+        self.name = name
+        self.coins = coins
+        self.score = score
+
 def loadBuildings():
     buildings = ['bN','bB','bK','bp','bQ']
     for i in buildings:
@@ -36,6 +49,14 @@ def draw_exit_button():
     pygame.draw.rect(screen, exit_game_color, exit_game_rect)
     screen.blit(exit_game_text, (exit_game_rect.centerx - exit_game_text.get_width() // 2, exit_game_rect.centery - exit_game_text.get_height() // 2))
 
+def showCoins(player):
+
+    font = pygame.font.Font(None, 36)
+    text_content = "Coins:%d" % (player.coins)
+    text_surface = font.render(text_content, True, (255, 255, 255))
+
+    screen.blit(text_surface, (exit_game_rect.centerx - exit_game_text.get_width(), (exit_game_rect.centery - exit_game_text.get_height() // 2)+65))
+
 def drawBuildings(screen, board):
     for row in range(grids):
         for col in range(grids):
@@ -55,7 +76,7 @@ def loadTitle():
     title_rect = title_image.get_rect(topleft=(screen.get_width()//2 - title_image.get_width() // 2, 50))
     return title_image,title_rect
 
-def drawBoard(selectedSquare):
+def drawBoard(selectedSquare,player):
     screen.fill(black)
     colors = [pygame.Color('white'), pygame.Color('gray')]
     for row in range(grids):
@@ -70,6 +91,7 @@ def drawBoard(selectedSquare):
             pygame.draw.rect(screen, color, rect)
     drawBuildings(screen, board)
     draw_exit_button()
+    showCoins(player)
     pygame.display.flip()
 
 def drawMenu():
@@ -94,6 +116,7 @@ def drawMenu():
     return start_button_rect,load_button_rect,high_scores_button_rect,exit_button_rect
 
 def new_game(load = False):
+    player = Player("JoonHueay")
     selectedSquare = None
     global board
     if load:
@@ -105,7 +128,7 @@ def new_game(load = False):
             print("No saved game")
             pass
     while True:
-        drawBoard(selectedSquare)
+        drawBoard(selectedSquare,player)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -119,7 +142,7 @@ def new_game(load = False):
                     selectedSquare = (col, row)
                     print(selectedSquare)
                     pass
-        drawBoard(selectedSquare)
+        drawBoard(selectedSquare,player)
     return
 
 def show_score():
