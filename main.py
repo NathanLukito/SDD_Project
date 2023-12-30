@@ -232,6 +232,25 @@ def new_game(load = False):
 def show_score():
     return
 
+#liwei - deduct player's coins from the building cost
+def build_building(building_type):
+    global coins
+    #Define the cost for each building type
+    building_costs={
+        'Residential': 1,
+        'Industry': 1,
+        'Commercial': 1,
+        'Park': 1,
+        'Road': 1,
+    }
+
+    # Return the cost for the given building type, or 0 if the type is not recognized
+    building_cost = building_costs.get(building_type, 0)
+    coins = coins - building_cost
+
+build_building('Road')
+print(coins)
+
 def main():
     loadBuildings()
     running = True
