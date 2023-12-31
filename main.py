@@ -77,7 +77,7 @@ def loadTitle():
     title_rect = title_image.get_rect(topleft=(screen.get_width()//2 - title_image.get_width() // 2, 50))
     return title_image,title_rect
 
-def drawBoard(selectedSquare,player):
+def drawBoard(selectedSquare):
     screen.fill(black)
     colors = [pygame.Color('white'), pygame.Color('gray')]
     for row in range(grids):
@@ -92,7 +92,6 @@ def drawBoard(selectedSquare,player):
             pygame.draw.rect(screen, color, rect)
     drawBuildings(screen, board)
     draw_exit_button()
-    showCoins(player)
     pygame.display.flip()
 
 def drawMenu():
@@ -210,7 +209,7 @@ def new_game(load = False):
             print("No saved game")
             pass
     while True:
-        drawBoard(selectedSquare,player)
+        drawBoard(selectedSquare)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -223,9 +222,10 @@ def new_game(load = False):
                 else:
                     selectedSquare = (col, row)
 
-        drawBoard(selectedSquare,player)
+        drawBoard(selectedSquare)
         coins = coins - 1
         calculatePoints()
+        showCoins(player)
 
     return
 
