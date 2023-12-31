@@ -50,13 +50,66 @@ def draw_exit_button():
     pygame.draw.rect(screen, exit_game_color, exit_game_rect)
     screen.blit(exit_game_text, (exit_game_rect.centerx - exit_game_text.get_width() // 2, exit_game_rect.centery - exit_game_text.get_height() // 2))
 
-def showCoins(player):
+def showCoins():
 
     font = pygame.font.Font(None, 36)
-    text_content = "Coins:%d" % (player.coins)
+    text_content = "Coins:%d" % (coins)
     text_surface = font.render(text_content, True, (255, 255, 255))
 
     screen.blit(text_surface, (exit_game_rect.centerx - exit_game_text.get_width(), (exit_game_rect.centery - exit_game_text.get_height() // 2)+65))
+
+def showBuildings():
+    font = pygame.font.Font(None,36)
+    residential_building = pygame.image.load("buildings/Residential.png").convert_alpha()
+    residential_building = pygame.transform.scale(residential_building, (60, 60))
+    residential_rect = residential_building.get_rect()
+    residential_rect.topleft = (20,150)
+    pygame.draw.rect(screen, (255,255,255), residential_rect)
+    screen.blit(residential_building, residential_rect)
+    residential_text = "Residential"
+    residential_text_surface = font.render(residential_text, True, (255,255,255))
+    screen.blit(residential_text_surface, (10,215))
+
+    industry_building = pygame.image.load("buildings/Industry.png")
+    industry_building = pygame.transform.scale(industry_building, (60, 60))
+    industry_rect = industry_building.get_rect()
+    industry_rect.topleft = (20,170+residential_rect.top-40)
+    pygame.draw.rect(screen, (255,255,255), industry_rect)
+    screen.blit(industry_building, industry_rect)
+    industry_text = "Industrial"
+    industry_text_surface = font.render(industry_text, True, (255,255,255))
+    screen.blit(industry_text_surface, (10,industry_rect.top+65))
+
+    commercial_building = pygame.image.load("buildings/Commercial.png")
+    commercial_building = pygame.transform.scale(commercial_building, (60, 60))
+    commercial_rect = commercial_building.get_rect()
+    commercial_rect.topleft = (20,190+residential_rect.top*2-40)
+    pygame.draw.rect(screen, (255,255,255), commercial_rect)
+    screen.blit(commercial_building, commercial_rect)
+    commercial_text = "Commercial"
+    commercial_text_surface = font.render(commercial_text, True, (255,255,255))
+    screen.blit(commercial_text_surface, (10,commercial_rect.top+65))
+
+    park_building = pygame.image.load("buildings/Park.png")
+    park_building = pygame.transform.scale(park_building, (60, 60))
+    park_rect = park_building.get_rect()
+    park_rect.topleft = (20,210+residential_rect.top*3-40)
+    pygame.draw.rect(screen, (255,255,255), park_rect)
+    screen.blit(park_building, park_rect)
+    park_text = "Park"
+    park_text_surface = font.render(park_text, True, (255,255,255))
+    screen.blit(park_text_surface, (10,park_rect.top+65))
+
+    road_building = pygame.image.load("buildings/Road.png")
+    road_building = pygame.transform.scale(road_building, (60, 60))
+    road_rect = road_building.get_rect()
+    road_rect.topleft = (20,230+residential_rect.top*4-40)
+    pygame.draw.rect(screen, (255,255,255), road_rect)
+    screen.blit(road_building, road_rect)
+    road_text = "Road"
+    road_text_surface = font.render(road_text, True, (255,255,255))
+    screen.blit(road_text_surface, (10,road_rect.top+65))
+
 
 def drawBuildings(screen, board):
     for row in range(grids):
@@ -92,6 +145,8 @@ def drawBoard(selectedSquare):
             pygame.draw.rect(screen, color, rect)
     drawBuildings(screen, board)
     draw_exit_button()
+    showCoins()
+    showBuildings()
     pygame.display.flip()
 
 def drawMenu():
@@ -223,9 +278,8 @@ def new_game(load = False):
                     selectedSquare = (col, row)
 
         drawBoard(selectedSquare)
-        coins = coins - 1
         calculatePoints()
-        showCoins(player)
+        showCoins()
 
     return
 
