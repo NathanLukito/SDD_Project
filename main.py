@@ -1,4 +1,5 @@
 import pygame
+import os
 import sys
 grids = 20
 white = (255, 255, 255)
@@ -172,6 +173,7 @@ def drawMenu():
 
     pygame.display.flip()
     return start_button_rect,load_button_rect,high_scores_button_rect,exit_button_rect
+
 def calculatePoints():
     turn_points = 0
     turn_coins = 0
@@ -268,7 +270,7 @@ def new_game(load = False):
     while True:
         residential_rect,industry_rect,commercial_rect,park_rect,road_rect = drawBoard(selectedSquare)
         building_rects = [residential_rect,industry_rect,commercial_rect,park_rect,road_rect]
-
+        print(board)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -298,19 +300,22 @@ def new_game(load = False):
         calculatePoints()
         showCoins()
         if (checkGameFinish()):
+            score = calculatePoints()
             break
-    showEndScreen()
+    showEndScreen(score)
     return
+
 def checkGameFinish():
     for i in range(len(board)):
         for ii in range(len(board[i])):
             if board[i][ii] == "--":
                 return False
     return True
-def showEndScreen():
+
+def showEndScreen(score):
+    # check qualify for leaderboard anot
     return 
 def checkBuildingPosition(position,i):
-
     for i in range(len(board)):
         for ii in range(len(board[i])):
             if board[i][ii] != "--":
@@ -322,6 +327,17 @@ def checkBuildingPosition(position,i):
                     else:
                         return False
     return True
+
+def Save_Game():
+    try:
+        with open("save_game.py","w") as file:
+            file.write("def game_details():\n")
+            file.write("    "+"board = "+str(board)+"\n")
+            file.write("    "+"return board")
+            file.close()
+    except:
+        print("Error in save game")
+    return
 
 def get_user_input():
     input_box = pygame.Rect(0, 0, 200, 32)
@@ -397,6 +413,12 @@ def get_user_input():
         pygame.time.wait(30)
 
 
+def show_score():
+    try:
+        from save_game import leaderboard
+        leaderboard = leaderboard()
+    except:
+        print("Leaderboard scores  not found")
 
 
 
@@ -413,6 +435,7 @@ def main():
                 col = (mouse_x - offset_x) // sqSize
                 row = (mouse_y - offset_y) // sqSize
                 if start_button_rect.collidepoint(mouse_x,mouse_y):
+                    board = [['--'] * grids for _ in range(20)]
                     new_game(False)
                 elif load_button_rect.collidepoint(mouse_x, mouse_y):
                     new_game(True)
