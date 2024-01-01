@@ -22,18 +22,101 @@ Classes:
 - Player: A player class that conatins the name of the player, the number of coins the player has and their score.
 
 Functions:
-- loadBuildings(): Loads and scales building piece images.
-- draw_exit_button(): Draws the exit button on the screen.
-- showCoins(): Draws the number of coins the player has in the current turn.
-- showBuildings(): Draws the types of buildings available for the player to build on screen.
-- drawBuildings(screen, board): Draws building pieces on the game board.
-- loadBackground(): Loads and scales the background image.
-- loadTitle(): Loads the title image and calculates its position.
-- drawBoard(selectedSquare): Draws the game board, highlighting the selected square.
-- drawMenu(): Draws the main menu with buttons for starting a new game, loading a game, checking high scores, and exiting.
-- new_game(load=False): Manages the game loop for starting a new game or loading a saved game.
-- show_score(): Placeholder function for displaying high scores.
-- main(): The main function that initializes the Pygame environment and manages the main game loop.
+
+loadBuildings():
+Purpose: Loads building images and stores them in the images dictionary.
+Parameters: None.
+Return: None.
+
+draw_exit_button():
+Purpose: Draws and displays the exit button in the main game.
+Parameters: None.
+Return: None.
+
+showCoins():
+Purpose: Draws and displays the number of coins in the main game.
+Parameters: None.
+Return: None.
+
+showBuildings():
+Purpose: Loads, draws, and displays the available buildings on the left side of the main game screen.
+Parameters: None.
+Return: Rectangles representing the positions of the loaded buildings.
+
+drawBuildings(screen, board):
+Purpose: Draws the buildings on the 20x20 grid of the main game.
+Parameters:
+screen: Pygame screen surface.
+board: 2D list representing the current state of the game board.
+Return: None.
+
+loadBackground():
+Purpose: Loads and scales the background image of the main menu.
+Parameters: None.
+Return: Loaded background image.
+
+loadTitle():
+Purpose: Loads the main menu screen title image.
+Parameters: None.
+Return: Loaded title image and its rectangle.
+
+drawBoard(selectedSquare):
+Purpose: Draws the main game board and elements.
+Parameters:
+selectedSquare: Tuple representing the selected square on the grid.
+Return: Rectangles representing the positions of the buildings on the left side of the main game screen.
+
+drawMenu():
+Purpose: Draws the main menu items and buttons.
+Parameters: None.
+Return: Rectangles representing the positions of the menu buttons.
+
+calculatePoints():
+Purpose: Calculates points and updates the global points and coins based on the current state of the game board.
+Parameters: None.
+Return: None.
+
+initialRandomBuilding():
+Purpose: Displays the initial random building options on the main game screen for the first turn.
+Parameters: None.
+Return: None.
+
+new_game(load=False):
+Purpose: Main game logic, handles user input, building placement, and turns.
+Parameters:
+load: Boolean indicating whether to load a saved game.
+Return: None.
+
+checkGameFinish():
+Purpose: Checks if the game is finished based on the number of coins and filled squares on the board.
+Parameters: None.
+Return: Boolean indicating whether the game is finished.
+
+showEndScreen(score):
+Purpose: Displays the end screen with the final score and leaderboard status.
+Parameters:
+score: Player's final score.
+Return: None.
+
+get_user_input():
+Purpose: Prompts the user to input the position for building placement.
+Parameters: None.
+Return: String representing the user input position.
+
+Save_Game():
+Purpose: Saves the current game state to a Python file.
+Parameters: None.
+Return: None.
+
+show_score():
+Purpose: Displays the leaderboard scores.
+Parameters: None.
+Return: Leaderboard scores.
+
+main():
+Purpose: Main function to run the entire program, handling main menu interactions.
+Parameters: None.
+Return: None.
 
 Usage:
 - Run the script to start the Ngee Ann City game.
