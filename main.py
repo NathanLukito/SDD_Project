@@ -1,12 +1,15 @@
 import pygame
 import os
 import sys
+import random
+
 grids = 20
 white = (255, 255, 255)
 black = (0, 0, 0)
 select = (255, 0, 0)
 coins = 16
 points = 0
+turns = 1
 
 images = {}
 buildings = ["R","I","C","O","Ro"]
@@ -255,11 +258,52 @@ def calculatePoints():
     coins += turn_coins
     return
 
+def initialRandomBuilding():
+    random_building_names = random.sample(list(images.keys()), 2)
+    center_x = screen.get_width() // 2
+    center_y = screen.get_height() // 2
+    width = 512
+    height = 512
+    x = center_x - width // 2
+    y = center_y - height // 2
+
+    overlay = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 150))
+    screen.blit(overlay, (0, 0))
+
+    building1_rect = pygame.transform.scale(images[random_building_names[0]], (256, 256)).get_rect(topleft=(x + 50, y + 50))
+    building2_rect = pygame.transform.scale(images[random_building_names[1]], (256, 256)).get_rect(topleft=(x + 512, y + 50))
+    screen.blit(images[random_building_names[0]], building1_rect.topleft)
+    screen.blit(images[random_building_names[1]], building2_rect.topleft)
+    pygame.display.flip()
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                if building1_rect.collidepoint(mouse_x, mouse_y):
+                    position = get_user_input()
+                    x = alphabet.index(position[0].lower())
+                    y = int(position[1]) - 1
+                    board[x][y] = random_building_names[0]
+                    running = False
+                elif building2_rect.collidepoint(mouse_x, mouse_y):
+                    position = get_user_input()
+                    x = alphabet.index(position[0].lower())
+                    y = int(position[1]) - 1
+                    board[x][y] = random_building_names[1]
+                    running = False
+
+    return
+
 def new_game(load = False):
     player = Player("JoonHueay")
     selectedSquare = None
     global board
     global coins
+    global turns
     if load:
         try:
             from save_game import game_details
@@ -271,6 +315,9 @@ def new_game(load = False):
         residential_rect,industry_rect,commercial_rect,park_rect,road_rect = drawBoard(selectedSquare)
         building_rects = [residential_rect,industry_rect,commercial_rect,park_rect,road_rect]
         print(board)
+        if turns == 1:
+            initialRandomBuilding()
+            turns += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -299,6 +346,7 @@ def new_game(load = False):
 
         calculatePoints()
         showCoins()
+        turns += 1
         if (checkGameFinish()):
             score = calculatePoints()
             break
@@ -357,11 +405,12 @@ def get_user_input():
     confirm_color = pygame.Color('forestgreen')
     confirm_text = pygame.font.Font(None, 28).render('Confirm', True, (255, 255, 255))
     confirm_rect = confirm_text.get_rect(center=confirm_button.center)
-    
-    cancel_button = pygame.Rect(input_box.right - 80, input_box.bottom + 10, 80, 32)
-    cancel_color = pygame.Color('firebrick')
-    cancel_text = pygame.font.Font(None, 28).render('Cancel', True, (255, 255, 255))
-    cancel_rect = cancel_text.get_rect(center=cancel_button.center)
+
+    if turns != 1:
+        cancel_button = pygame.Rect(input_box.right - 80, input_box.bottom + 10, 80, 32)
+        cancel_color = pygame.Color('firebrick')
+        cancel_text = pygame.font.Font(None, 28).render('Cancel', True, (255, 255, 255))
+        cancel_rect = cancel_text.get_rect(center=cancel_button.center)
 
     while True:
         for event in pygame.event.get():
@@ -374,13 +423,20 @@ def get_user_input():
                 else:
                     active = False
                 color = color_active if active else color_inactive
-                if confirm_button.collidepoint(event.pos):
-                    if len(text) == 2 and text[0].isalpha() and text[1].isdigit():
-                        return text
-                    else:
-                        print("Invalid input. Please enter a letter followed by a number.")
-                elif cancel_button.collidepoint(event.pos):
-                    return None
+                if turns != 1:
+                    if confirm_button.collidepoint(event.pos):
+                        if len(text) == 2 and text[0].isalpha() and text[1].isdigit():
+                            return text
+                        else:
+                            print("Invalid input. Please enter a letter followed by a number.")
+                    elif cancel_button.collidepoint(event.pos):
+                        return None
+                else:
+                    if confirm_button.collidepoint(event.pos):
+                        if len(text) == 2 and text[0].isalpha() and text[1].isdigit():
+                            return text
+                        else:
+                            print("Invalid input. Please enter a letter followed by a number.")
             if event.type == pygame.KEYDOWN:
                 if active:
                     if event.key == pygame.K_RETURN:
@@ -405,9 +461,10 @@ def get_user_input():
 
         pygame.draw.rect(screen, confirm_color, confirm_button)
         screen.blit(confirm_text, confirm_rect)
-        
-        pygame.draw.rect(screen, cancel_color, cancel_button)
-        screen.blit(cancel_text, cancel_rect)
+
+        if turns != 1:
+            pygame.draw.rect(screen, cancel_color, cancel_button)
+            screen.blit(cancel_text, cancel_rect)
 
         pygame.display.flip()
         pygame.time.wait(30)
