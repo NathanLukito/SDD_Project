@@ -14,7 +14,7 @@ turns = 1
 images = {}
 buildings = ["R","I","C","O","Ro"]
 alphabet = "abcdefghijklmnopqrstuvwxyz"
-
+board = []
 class Building:
     def __init__(self, building_type, row, col, cost = 1):
         self.building_type = building_type
@@ -32,7 +32,6 @@ def loadBuildings():
     for i in buildings:
         images[i] = pygame.transform.scale(pygame.image.load('buildings/' + i + '.png'),(sqSize,sqSize))
 
-board = [['--'] * grids for _ in range(20)]
 
 
 start_button = pygame.image.load("buttons/start_button.jpeg")
@@ -54,6 +53,7 @@ exit_game_text = pygame.font.Font(None, 36).render("Exit", True, white)
 def draw_exit_button():
     pygame.draw.rect(screen, exit_game_color, exit_game_rect)
     screen.blit(exit_game_text, (exit_game_rect.centerx - exit_game_text.get_width() // 2, exit_game_rect.centery - exit_game_text.get_height() // 2))
+
 
 def showCoins():
 
@@ -259,7 +259,7 @@ def calculatePoints():
     return
 
 def initialRandomBuilding():
-    random_building_names = random.sample(list(images.keys()), 2)
+    random_building_names = random.sample(list(images.keys())[:4], 2)
     center_x = screen.get_width() // 2
     center_y = screen.get_height() // 2
     width = 512
@@ -301,9 +301,9 @@ def initialRandomBuilding():
 def new_game(load = False):
     player = Player("JoonHueay")
     selectedSquare = None
-    global board
     global coins
     global turns
+    global board
     if load:
         try:
             from save_game import game_details
@@ -311,10 +311,14 @@ def new_game(load = False):
         except:
             print("No saved game")
             pass
+    else:
+        board = [['R'] * grids for _ in range(20)]
+        coins = 16
+        points = 0
+        turns = 1
     while True:
         residential_rect,industry_rect,commercial_rect,park_rect,road_rect = drawBoard(selectedSquare)
         building_rects = [residential_rect,industry_rect,commercial_rect,park_rect,road_rect]
-        print(board)
         if turns == 1:
             initialRandomBuilding()
             turns += 1
@@ -364,9 +368,9 @@ def showEndScreen(score):
     # check qualify for leaderboard anot
     return 
 def checkBuildingPosition(position,i):
-    for i in range(len(board)):
-        for ii in range(len(board[i])):
-            if board[i][ii] != "--":
+    for j in range(len(board)):
+        for jj in range(len(board[j])):
+            if board[j][jj] != "--":
                 x = alphabet.index(position[0].lower())
                 y = int(position[1]) - 1
                 if i != 4:
@@ -374,14 +378,21 @@ def checkBuildingPosition(position,i):
                         return True
                     else:
                         return False
+                else:
+                    return True
+
     return True
 
 def Save_Game():
     try:
+        from save_game import game_details
+        board,leaderboard,variables = game_details()
         with open("save_game.py","w") as file:
             file.write("def game_details():\n")
             file.write("    "+"board = "+str(board)+"\n")
-            file.write("    "+"return board")
+            file.write("    "+"leaderboard = "+str(leaderboard)+"\n")
+            file.write("    variables = {turn: " + str(turns) + ", points: " + str(points) + ", coins: " + str(coins) + "}\n")
+            file.write("    "+"return board,leaderboard,variables")
             file.close()
     except:
         print("Error in save game")
@@ -472,8 +483,9 @@ def get_user_input():
 
 def show_score():
     try:
-        from save_game import leaderboard
-        leaderboard = leaderboard()
+        from save_game import game_details
+        board,leaderboard,variables = game_details()
+        return leaderboard
     except:
         print("Leaderboard scores  not found")
 
@@ -492,7 +504,6 @@ def main():
                 col = (mouse_x - offset_x) // sqSize
                 row = (mouse_y - offset_y) // sqSize
                 if start_button_rect.collidepoint(mouse_x,mouse_y):
-                    board = [['--'] * grids for _ in range(20)]
                     new_game(False)
                 elif load_button_rect.collidepoint(mouse_x, mouse_y):
                     new_game(True)
