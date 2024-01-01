@@ -17,9 +17,15 @@ Variables:
 - exit_game_color (tuple): RGB color value for the exit button.
 - exit_game_text (pygame.Surface): Rendered text for the exit button.
 
+Classes:
+- Building: A building class that contains the building type, cost, and its coordinates on the board.
+- Player: A player class that conatins the name of the player, the number of coins the player has and their score.
+
 Functions:
 - loadBuildings(): Loads and scales building piece images.
 - draw_exit_button(): Draws the exit button on the screen.
+- showCoins(): Draws the number of coins the player has in the current turn.
+- showBuildings(): Draws the types of buildings available for the player to build on screen.
 - drawBuildings(screen, board): Draws building pieces on the game board.
 - loadBackground(): Loads and scales the background image.
 - loadTitle(): Loads the title image and calculates its position.
