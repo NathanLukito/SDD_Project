@@ -32,6 +32,7 @@ def loadBuildings():
     for i in buildings:
         images[i] = pygame.transform.scale(pygame.image.load('buildings/' + i + '.png'),(sqSize,sqSize))
 
+descriptions = ["This is a beautiful landscape.", "A majestic animal in its habitat.", "An object of historical significance.", "A vibrant cultural scene.", "A captivating portrait."]
 board = [['--'] * grids for _ in range(20)]
 
 
@@ -63,6 +64,57 @@ def showCoins():
 
     screen.blit(text_surface, (exit_game_rect.centerx - exit_game_text.get_width(), (exit_game_rect.centery - exit_game_text.get_height() // 2)+65))
 
+def showBuildingDescriptions():
+    font = pygame.font.Font(None,36)
+    residential_building = pygame.image.load("buildings/R.png").convert_alpha()
+    residential_building = pygame.transform.scale(residential_building, (60, 60))
+    residential_rect = residential_building.get_rect()
+    residential_rect.topleft = (20,20)
+    pygame.draw.rect(screen, (255,255,255), residential_rect)
+    screen.blit(residential_building, residential_rect)
+    residential_text = "Residential"
+    residential_text_surface = font.render(residential_text, True, (255,255,255))
+    screen.blit(residential_text_surface, (10,85))
+
+    industry_building = pygame.image.load("buildings/I.png")
+    industry_building = pygame.transform.scale(industry_building, (60, 60))
+    industry_rect = industry_building.get_rect()
+    industry_rect.topleft = (20,residential_rect.top)
+    pygame.draw.rect(screen, (255,255,255), industry_rect)
+    screen.blit(industry_building, industry_rect)
+    industry_text = "Industrial"
+    industry_text_surface = font.render(industry_text, True, (255,255,255))
+    screen.blit(industry_text_surface, (10,industry_rect.top+20))
+
+    commercial_building = pygame.image.load("buildings/C.png"   )
+    commercial_building = pygame.transform.scale(commercial_building, (60, 60))
+    commercial_rect = commercial_building.get_rect()
+    commercial_rect.topleft = (20,190+residential_rect.top*2-40)
+    pygame.draw.rect(screen, (255,255,255), commercial_rect)
+    screen.blit(commercial_building, commercial_rect)
+    commercial_text = "Commercial"
+    commercial_text_surface = font.render(commercial_text, True, (255,255,255))
+    screen.blit(commercial_text_surface, (10,commercial_rect.top+65))
+
+    park_building = pygame.image.load("buildings/O.png")
+    park_building = pygame.transform.scale(park_building, (60, 60))
+    park_rect = park_building.get_rect()
+    park_rect.topleft = (20,210+residential_rect.top*3-40)
+    pygame.draw.rect(screen, (255,255,255), park_rect)
+    screen.blit(park_building, park_rect)
+    park_text = "Park"
+    park_text_surface = font.render(park_text, True, (255,255,255))
+    screen.blit(park_text_surface, (10,park_rect.top+65))
+
+    road_building = pygame.image.load("buildings/Ro.png")
+    road_building = pygame.transform.scale(road_building, (60, 60))
+    road_rect = road_building.get_rect()
+    road_rect.topleft = (20,230+residential_rect.top*4-40)
+    pygame.draw.rect(screen, (255,255,255), road_rect)
+    screen.blit(road_building, road_rect)
+    road_text = "Road"
+    road_text_surface = font.render(road_text, True, (255,255,255))
+    screen.blit(road_text_surface, (10,road_rect.top+65))
 def showBuildings():
     font = pygame.font.Font(None,36)
     residential_building = pygame.image.load("buildings/R.png").convert_alpha()
@@ -177,6 +229,12 @@ def drawMenu():
     pygame.display.flip()
     return start_button_rect,load_button_rect,high_scores_button_rect,exit_button_rect
 
+def drawDescriptions():
+    while True:
+        screen.fill(black)
+        showBuildingDescriptions()
+        pygame.display.flip()
+
 def calculatePoints():
     turn_points = 0
     turn_coins = 0
@@ -200,51 +258,51 @@ def calculatePoints():
 
     for i in range(rows):
         for x in range(cols):
-            if board[i][x] == 'Re':
-                add_points(i, x + 1, 'In', 1)
-                add_points(i, x - 1, 'In', 1)
-                add_points(i + 1, x, 'In', 1)
-                add_points(i - 1, x, 'In', 1)
-                add_points(i - 1, x - 1, 'In', 1)
-                add_points(i - 1, x + 1, 'In', 1)
-                add_points(i + 1, x - 1, 'In', 1)
-                add_points(i + 1, x + 1, 'In', 1)
-                add_points(i, x + 1, 'Re', 1)
-                add_points(i, x - 1, 'Re', 1)
-                add_points(i + 1, x, 'Re', 1)
-                add_points(i - 1, x, 'Re', 1)
-                add_points(i, x + 1, 'Co', 1)
-                add_points(i, x - 1, 'Co', 1)
-                add_points(i + 1, x, 'Co', 1)
-                add_points(i - 1, x, 'Co', 1)
-                add_points(i, x + 1, 'Pa', 2)
-                add_points(i, x - 1, 'Pa', 2)
-                add_points(i + 1, x, 'Pa', 2)
-                add_points(i - 1, x, 'Pa', 2)
+            if board[i][x] == 'R':
+                add_points(i, x + 1, 'I', 1)
+                add_points(i, x - 1, 'I', 1)
+                add_points(i + 1, x, 'I', 1)
+                add_points(i - 1, x, 'I', 1)
+                add_points(i - 1, x - 1, 'I', 1)
+                add_points(i - 1, x + 1, 'I', 1)
+                add_points(i + 1, x - 1, 'I', 1)
+                add_points(i + 1, x + 1, 'I', 1)
+                add_points(i, x + 1, 'R', 1)
+                add_points(i, x - 1, 'R', 1)
+                add_points(i + 1, x, 'R', 1)
+                add_points(i - 1, x, 'R', 1)
+                add_points(i, x + 1, 'C', 1)
+                add_points(i, x - 1, 'C', 1)
+                add_points(i + 1, x, 'C', 1)
+                add_points(i - 1, x, 'C', 1)
+                add_points(i, x + 1, 'O', 2)
+                add_points(i, x - 1, 'O', 2)
+                add_points(i + 1, x, 'O', 2)
+                add_points(i - 1, x, 'O', 2)
 
-            if board[i][x] == 'In':
+            if board[i][x] == 'I':
                 turn_points += 1
-                add_coins(i, x + 1, 'Re', 1)
-                add_coins(i, x - 1, 'Re', 1)
-                add_coins(i + 1, x, 'Re', 1)
-                add_coins(i - 1, x, 'Re', 1)
+                add_coins(i, x + 1, 'R', 1)
+                add_coins(i, x - 1, 'R', 1)
+                add_coins(i + 1, x, 'R', 1)
+                add_coins(i - 1, x, 'R', 1)
 
-            if board[i][x] == 'Co':
-                add_points(i, x + 1, 'Co', 1)
-                add_points(i, x - 1, 'Co', 1)
-                add_points(i + 1, x, 'Co', 1)
-                add_points(i - 1, x, 'Co', 1)
+            if board[i][x] == 'C':
+                add_points(i, x + 1, 'C', 1)
+                add_points(i, x - 1, 'C', 1)
+                add_points(i + 1, x, 'C', 1)
+                add_points(i - 1, x, 'C', 1)
 
-                add_coins(i, x + 1, 'Re', 1)
-                add_coins(i, x - 1, 'Re', 1)
-                add_coins(i + 1, x, 'Re', 1)
-                add_coins(i - 1, x, 'Re', 1)
+                add_coins(i, x + 1, 'R', 1)
+                add_coins(i, x - 1, 'R', 1)
+                add_coins(i + 1, x, 'R', 1)
+                add_coins(i - 1, x, 'R', 1)
 
-            if board[i][x] == 'Pa':
-                add_points(i, x + 1, 'Pa', 1)
-                add_points(i, x - 1, 'Pa', 1)
-                add_points(i + 1, x, 'Pa', 1)
-                add_points(i - 1, x, 'Pa', 1)
+            if board[i][x] == 'O':
+                add_points(i, x + 1, 'O', 1)
+                add_points(i, x - 1, 'O', 1)
+                add_points(i + 1, x, 'O', 1)
+                add_points(i - 1, x, 'O', 1)
 
             if board[i][x] == 'Ro':
                 for a in range(cols):
@@ -262,8 +320,8 @@ def initialRandomBuilding():
     random_building_names = random.sample(list(images.keys()), 2)
     center_x = screen.get_width() // 2
     center_y = screen.get_height() // 2
-    width = 512
-    height = 512
+    width = 300
+    height = 300
     x = center_x - width // 2
     y = center_y - height // 2
 
@@ -271,8 +329,8 @@ def initialRandomBuilding():
     overlay.fill((0, 0, 0, 150))
     screen.blit(overlay, (0, 0))
 
-    building1_rect = pygame.transform.scale(images[random_building_names[0]], (256, 256)).get_rect(topleft=(x + 50, y + 50))
-    building2_rect = pygame.transform.scale(images[random_building_names[1]], (256, 256)).get_rect(topleft=(x + 512, y + 50))
+    building1_rect = pygame.transform.scale(images[random_building_names[0]], (300, 300)).get_rect(topleft=(x + 50, y + 50))
+    building2_rect = pygame.transform.scale(images[random_building_names[1]], (300, 300)).get_rect(topleft=(x + 300, y + 50))
     screen.blit(images[random_building_names[0]], building1_rect.topleft)
     screen.blit(images[random_building_names[1]], building2_rect.topleft)
     pygame.display.flip()
@@ -314,7 +372,7 @@ def new_game(load = False):
     while True:
         residential_rect,industry_rect,commercial_rect,park_rect,road_rect = drawBoard(selectedSquare)
         building_rects = [residential_rect,industry_rect,commercial_rect,park_rect,road_rect]
-        print(board)
+        #print(board)
         if turns == 1:
             initialRandomBuilding()
             turns += 1
@@ -330,7 +388,7 @@ def new_game(load = False):
                     return
                 for i in range(len(building_rects)):
                     if building_rects[i].collidepoint(mouse_x, mouse_y):
-                        print(board)
+                        #print(board)
                         position = get_user_input()
                         if position != None:
                             if coins > 0:
@@ -339,12 +397,14 @@ def new_game(load = False):
                                     y = int(position[1]) - 1
                                     board[x][y] = buildings[i]
                                     coins -= 1
+                                    calculatePoints()
+                                    print(points)
                                     
                         
                 else:
                     selectedSquare = (col, row)
 
-        calculatePoints()
+
         showCoins()
         turns += 1
         if (checkGameFinish()):
