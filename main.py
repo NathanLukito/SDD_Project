@@ -15,6 +15,13 @@ points = 0
 turns = 0
 images = {}
 buildings = ["R","I","C","O","Ro"]
+building_names = {
+    "R": "Residential",
+    "I": "Industrial",
+    "C": "Commercial",
+    "O": "Park",
+    "Ro": "Road"
+}
 alphabet = "abcdefghijklmnopqrstuvwxyz"
 board = []
 pygame.init()
@@ -198,10 +205,10 @@ def drawBoard(selectedSquare):
     showCoins()
     drawText("Turn:"+str(turns),pygame.font.SysFont(None,26),(255,255,255),150,87) # show the number of turn - liwei
     drawText("Score:"+str(points),pygame.font.SysFont(None,26),(255,255,255),240,87) #show the number of points - Liwei
-    residential_rect,industry_rect,commercial_rect,park_rect,road_rect = showBuildings()
+    #residential_rect,industry_rect,commercial_rect,park_rect,road_rect = showBuildings()
     pygame.display.flip()
 
-    return residential_rect,industry_rect,commercial_rect,park_rect,road_rect
+    return #residential_rect,industry_rect,commercial_rect,park_rect,road_rect
 
 #drawing and placing of the main menu items onto the main menu screen
 def drawMenu():
@@ -306,46 +313,50 @@ def calculatePoints():
     return turn_points, turn_coins
 
 # call upon the building list and remove Road and place onto the main screen to click and place for first turn ONLY
-def initialRandomBuilding():
+def RandomBuilding():
+    font = pygame.font.Font(None,36)
     random_building_names = random.sample(list(images.keys()), 2)
-    center_x = screen.get_width() // 2
-    center_y = screen.get_height() // 2
-    width = 512
-    height = 512
-    x = center_x - width // 2
-    y = center_y - height // 2
 
-    overlay = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
-    overlay.fill((0, 0, 0, 150))
-    screen.blit(overlay, (0, 0))
 
-    building1_rect = pygame.transform.scale(images[random_building_names[0]], (256, 256)).get_rect(topleft=(x + 50, y + 50))
-    building2_rect = pygame.transform.scale(images[random_building_names[1]], (256, 256)).get_rect(topleft=(x + 512, y + 50))
-    screen.blit(images[random_building_names[0]], building1_rect.topleft)
-    screen.blit(images[random_building_names[1]], building2_rect.topleft)
+    building1 = pygame.transform.scale(images[random_building_names[0]], (60, 60))
+    building1_rect = building1.get_rect()
+    building1_rect.topleft = (20, 150)
+    pygame.draw.rect(screen, (255,255,255), building1_rect)
+    screen.blit(building1, building1_rect)
+    building1_name = building_names[random_building_names[0]]
+    building1_name_surface = font.render(building1_name, True, (255,255,255))
+    screen.blit(building1_name_surface, (10,215))
+
+    building2 = pygame.transform.scale(images[random_building_names[1]], (60,60))
+    building2_rect = building2.get_rect()
+    building2_rect.topleft = (20, 170 + building1_rect.top - 40)
+    pygame.draw.rect(screen, (255,255,255), building2_rect)
+    screen.blit(building2, building2_rect)
+    building2_name = building_names[random_building_names[1]]
+    building2_name_surface = font.render(building2_name, True, (255,255,255))
+    screen.blit(building2_name_surface, (10, building2_rect.top + 65))
     pygame.display.flip()
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                if building1_rect.collidepoint(mouse_x, mouse_y):
-                    position = get_user_input()
-                    x = alphabet.index(position[0].lower())
-                    y = int(position[1:]) - 1
-                    board[x][y] = random_building_names[0]
-                    running = False
-                elif building2_rect.collidepoint(mouse_x, mouse_y):
-                    position = get_user_input()
-                    print(position)
-                    x = alphabet.index(position[0].lower())
-                    y = int(position[1]) - 1
-                    board[x][y] = random_building_names[1]
-                    running = False
-
-    return
+    # running = True
+    # while running:
+    #     for event in pygame.event.get():
+    #         if event.type == pygame.QUIT:
+    #             running = False
+    #         elif event.type == pygame.MOUSEBUTTONDOWN:
+    #             mouse_x, mouse_y = pygame.mouse.get_pos()
+    #             if building1_rect.collidepoint(mouse_x, mouse_y):
+    #                 position = get_user_input()
+    #                 x = alphabet.index(position[0].lower())
+    #                 y = int(position[1:]) - 1
+    #                 board[x][y] = random_building_names[0]
+    #                 running = False
+    #             elif building2_rect.collidepoint(mouse_x, mouse_y):
+    #                 position = get_user_input()
+    #                 print(position)
+    #                 x = alphabet.index(position[0].lower())
+    #                 y = int(position[1]) - 1
+    #                 board[x][y] = random_building_names[1]
+    #                 running = False
+    return building1_rect, building2_rect, random_building_names
 
 # main game logic
 # checks whether loading of game is needed if not create a new game
@@ -374,12 +385,16 @@ def new_game(load = False):
         coins = 16
         points = 0
         turns = 1
+    drawBoard(selectedSquare)
+    building1_rect, building2_rect, random_buildings = RandomBuilding()
+    building_rects = building1_rect, building2_rect
     while True:
-        residential_rect,industry_rect,commercial_rect,park_rect,road_rect = drawBoard(selectedSquare)
-        building_rects = [residential_rect,industry_rect,commercial_rect,park_rect,road_rect]
-        if turns == 1:
-            initialRandomBuilding()
-            turns += 1
+        #residential_rect,industry_rect,commercial_rect,park_rect,road_rect = drawBoard(selectedSquare)
+        #building_rects = [residential_rect,industry_rect,commercial_rect,park_rect,road_rect]
+
+        # if turns == 1:
+        #     RandomBuilding()
+        #     turns += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -396,15 +411,19 @@ def new_game(load = False):
                         print(position)
                         if position != None:
                             if coins > 0:
-                                if checkBuildingPosition(position,i):
+                                if checkBuildingPosition(position, i):
                                     x = alphabet.index(position[0].lower()) 
                                     y = int(position[1:]) - 1
-                                    board[x][y] = buildings[i]
+                                    board[x][y] = random_buildings[i]
                                     coins -= 1
                                     turns += 1
                                     turn_points,turn_coins = calculatePoints()
                                     points += turn_points
                                     coins += turn_coins
+                                    drawBoard(selectedSquare)
+                                    building1_rect, building2_rect, random_buildings = RandomBuilding()
+                                    building_rects = building1_rect, building2_rect
+                                    calculatePoints()
                                     print(points)
 
 
@@ -436,7 +455,7 @@ def showEndScreen(score):
 
 # for building placement whether the building placed meets the orthogonally adjacent requirement ( not for roads )
 # if the turn is 1 or board is empty, building can be placed anywhere
-def checkBuildingPosition(position,i):
+def checkBuildingPosition(position, i):
     for j in range(len(board)):
         for jj in range(len(board[j])):
             if board[j][jj] != "--":
@@ -489,11 +508,11 @@ def get_user_input():
     confirm_text = pygame.font.Font(None, 28).render('Confirm', True, (255, 255, 255))
     confirm_rect = confirm_text.get_rect(center=confirm_button.center)
 
-    if turns != 1:
-        cancel_button = pygame.Rect(input_box.right - 80, input_box.bottom + 10, 80, 32)
-        cancel_color = pygame.Color('firebrick')
-        cancel_text = pygame.font.Font(None, 28).render('Cancel', True, (255, 255, 255))
-        cancel_rect = cancel_text.get_rect(center=cancel_button.center)
+
+    cancel_button = pygame.Rect(input_box.right - 80, input_box.bottom + 10, 80, 32)
+    cancel_color = pygame.Color('firebrick')
+    cancel_text = pygame.font.Font(None, 28).render('Cancel', True, (255, 255, 255))
+    cancel_rect = cancel_text.get_rect(center=cancel_button.center)
 
     while True:
         for event in pygame.event.get():
@@ -506,20 +525,15 @@ def get_user_input():
                 else:
                     active = False
                 color = color_active if active else color_inactive
-                if turns != 1:
-                    if confirm_button.collidepoint(event.pos):
-                        if (len(text) >=2 and len(text) <= 3) and text[0].isalpha() and text[1:].isdigit():
+
+                if confirm_button.collidepoint(event.pos):
+                    if (len(text) >=2 and len(text) <= 3) and text[0].isalpha() and text[1:].isdigit():
                             return text
-                        else:
+                    else:
                             print("Invalid input. Please enter a letter followed by a number.")
-                    elif cancel_button.collidepoint(event.pos):
+                elif cancel_button.collidepoint(event.pos):
                         return None
-                else:
-                    if confirm_button.collidepoint(event.pos):
-                        if (len(text) >=2 and len(text) <= 3) and text[0].isalpha() and text[1:].isdigit():
-                            return text
-                        else:
-                            print("Invalid input. Please enter a letter followed by a number.")
+
             if event.type == pygame.KEYDOWN:
                 if active:
                     if event.key == pygame.K_RETURN:
@@ -545,9 +559,8 @@ def get_user_input():
         pygame.draw.rect(screen, confirm_color, confirm_button)
         screen.blit(confirm_text, confirm_rect)
 
-        if turns != 1:
-            pygame.draw.rect(screen, cancel_color, cancel_button)
-            screen.blit(cancel_text, cancel_rect)
+        pygame.draw.rect(screen, cancel_color, cancel_button)
+        screen.blit(cancel_text, cancel_rect)
 
         pygame.display.flip()
         pygame.time.wait(30)
