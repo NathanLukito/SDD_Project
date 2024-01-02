@@ -14,7 +14,7 @@ def game_details():
 
     }
     variables = {
-        "turn":1,
+        "turn":2,
         "points":0,
         "coins":15,
 
