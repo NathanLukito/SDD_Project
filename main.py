@@ -289,11 +289,12 @@ def initialRandomBuilding():
                 if building1_rect.collidepoint(mouse_x, mouse_y):
                     position = get_user_input()
                     x = alphabet.index(position[0].lower())
-                    y = int(position[1]) - 1
+                    y = int(position[1:]) - 1
                     board[x][y] = random_building_names[0]
                     running = False
                 elif building2_rect.collidepoint(mouse_x, mouse_y):
                     position = get_user_input()
+                    print(position)
                     x = alphabet.index(position[0].lower())
                     y = int(position[1]) - 1
                     board[x][y] = random_building_names[1]
@@ -347,11 +348,12 @@ def new_game(load = False):
                 for i in range(len(building_rects)):
                     if building_rects[i].collidepoint(mouse_x, mouse_y):
                         position = get_user_input()
+                        print(position)
                         if position != None:
                             if coins > 0:
                                 if checkBuildingPosition(position,i):
                                     x = alphabet.index(position[0].lower()) 
-                                    y = int(position[1]) - 1
+                                    y = int(position[1:]) - 1
                                     board[x][y] = buildings[i]
                                     coins -= 1
                                     turns += 1
@@ -390,7 +392,7 @@ def checkBuildingPosition(position,i):
         for jj in range(len(board[j])):
             if board[j][jj] != "--":
                 x = alphabet.index(position[0].lower())
-                y = int(position[1]) - 1
+                y = int(position[1:]) - 1
                 if (board[x-1][y] != ("--" or "Ro")) or (board[x+1][y] != ("--" or "Ro")) or (board[x][y-1] != ("--" or "Ro")) or (board[x][y+1] != ("--" or "Ro")):
                     return True
                 else:
@@ -455,7 +457,7 @@ def get_user_input():
                 color = color_active if active else color_inactive
                 if turns != 1:
                     if confirm_button.collidepoint(event.pos):
-                        if len(text) == 2 and text[0].isalpha() and text[1].isdigit():
+                        if (len(text) >=2 and len(text) <= 3) and text[0].isalpha() and text[1:].isdigit():
                             return text
                         else:
                             print("Invalid input. Please enter a letter followed by a number.")
@@ -463,20 +465,20 @@ def get_user_input():
                         return None
                 else:
                     if confirm_button.collidepoint(event.pos):
-                        if len(text) == 2 and text[0].isalpha() and text[1].isdigit():
+                        if (len(text) >=2 and len(text) <= 3) and text[0].isalpha() and text[1:].isdigit():
                             return text
                         else:
                             print("Invalid input. Please enter a letter followed by a number.")
             if event.type == pygame.KEYDOWN:
                 if active:
                     if event.key == pygame.K_RETURN:
-                        if len(text) == 2 and text[0].isalpha() and text[1].isdigit():
+                        if (len(text) >=2 and len(text) <= 3) and text[0].isalpha() and text[1:].isdigit():
                             return text
                         else:
                             print("Invalid input. Please enter a letter followed by a number.")
                     elif event.key == pygame.K_BACKSPACE:
                         text = text[:-1]
-                    elif len(text) < 2:
+                    elif len(text) < 3:
                         text += event.unicode
 
         pygame.draw.rect(screen, (255, 255, 255), input_box)
