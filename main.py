@@ -162,9 +162,6 @@ def drawBoard(selectedSquare):
             pygame.draw.rect(screen, color, rect)
     drawBuildings(screen, board)
     draw_exit_button()
-    if save_game_btn.draw(screen): #-liwei
-        print("Game saved")
-    showTurns("Turn:"+str(turns),text_font, (255,255,255),200,87)#Liwei
     showCoins()
     residential_rect,industry_rect,commercial_rect,park_rect,road_rect = showBuildings()
     pygame.display.flip()
@@ -336,7 +333,7 @@ def new_game(load = False):
             print("No saved game")
             pass
     else:
-        board = [['R'] * grids for _ in range(20)]
+        board = [['--'] * grids for _ in range(20)]
         coins = 16
         points = 0
         turns = 1
