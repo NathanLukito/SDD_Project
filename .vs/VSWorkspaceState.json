@@ -2,8 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\background",
+    "\\buildings",
     "\\buttons"
   ],
-  "SelectedNode": "\\main.py",
+  "SelectedNode": "\\background\\background.jpeg",
   "PreviewInSolutionExplorer": false
 }

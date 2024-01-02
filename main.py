@@ -283,8 +283,22 @@ def new_game(load = False):
 
     return
 
+def loadScoreBackground():
+    background_image = pygame.image.load("background/background.jpeg")
+    background_image = pygame.transform.scale(background_image, (width, height))
+    return background_image
+
 def show_score():
-    return
+    #try:
+        #from save_game import leaderboard
+        #leaderboard = leaderboard()
+        while True:
+            screen.fill(black)
+            screen.blit(loadScoreBackground(),(0,0))
+            pygame.display.flip()
+
+    #except:
+        #print("Leaderboard scores  not found")
 
 #liwei - deduct player's coins from the building cost
 def build_building(building_type):
