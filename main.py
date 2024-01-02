@@ -32,6 +32,45 @@ class Player:
         self.coins = coins
         self.score = score
 
+#Create saved game btn - Liwei
+class SaveGameButton:
+    def __init__(self, x_percent, y_percent, image, scale):
+        width = image.get_width()
+        height = image.get_height()
+
+        # Calculate the x and y coordinates based on percentages
+        self.rect = pygame.Rect(0, 0, int(width * scale), int(height * scale))
+        self.rect.topright = (
+            int((pygame.display.Info().current_w * x_percent / 100) - self.rect.width),
+            int((pygame.display.Info().current_h * y_percent / 100)),
+        )
+
+        # Scale the image
+        self.image = pygame.transform.scale(image, self.rect.size)
+        self.clicked = False
+
+    def draw(self, surface):
+        action = False
+        # get mouse position
+        pos = pygame.mouse.get_pos()
+
+        # check mouseover and clicked conditions
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] == 1 and not self.clicked:
+                self.clicked = True
+                action = True
+
+        if pygame.mouse.get_pressed()[0] == 0:
+            self.clicked = False
+
+        # draw button on screen
+        surface.blit(self.image, self.rect.topleft)
+
+        return action
+    
+save_game_btn_img = pygame.image.load('buttons/save.png')
+save_game_btn = SaveGameButton(90, 10, save_game_btn_img, 0.15)
+
 def loadBuildings():
     for i in buildings:
         images[i] = pygame.transform.scale(pygame.image.load('buildings/' + i + '.png'),(sqSize,sqSize))
@@ -63,6 +102,10 @@ def showCoins():
     text_content = "Coins:%d" % (coins)
     text_surface = font.render(text_content, True, (255, 255, 255))
     screen.blit(text_surface, (exit_game_rect.centerx - exit_game_text.get_width(), (exit_game_rect.centery - exit_game_text.get_height() // 2)+65))
+
+def drawText(text,font,text_col,x,y):
+    img = font.render(text,True,text_col)
+    screen.blit(img,(x,y))
 
 # loading drawing and displaying the buildings that are available on the left side of the screen of the main game
 def showBuildings():
@@ -162,7 +205,11 @@ def drawBoard(selectedSquare):
             pygame.draw.rect(screen, color, rect)
     drawBuildings(screen, board)
     draw_exit_button()
+    if save_game_btn.draw(screen):#Liwei
+            print("Game Saved")
     showCoins()
+    drawText("Turn:"+str(turns),pygame.font.SysFont(None,26),(255,255,255),150,87) # show the number of turn - liwei
+    drawText("Score:"+str(points),pygame.font.SysFont(None,26),(255,255,255),240,87) #show the number of points - Liwei
     residential_rect,industry_rect,commercial_rect,park_rect,road_rect = showBuildings()
     pygame.display.flip()
 
@@ -371,8 +418,9 @@ def new_game(load = False):
                     selectedSquare = (col, row)
 
         calculatePoints()
+        if save_game_btn.draw(screen):#Liwei
+            print("Game Saved")
         showCoins()
-        turns += 1
         if (checkGameFinish()):
             score = calculatePoints()
             break
