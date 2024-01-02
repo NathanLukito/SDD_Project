@@ -3,6 +3,7 @@ import pygame
 import os
 import sys
 import random
+import time
 
 #initiating of simple constant game variables
 grids = 20
@@ -464,6 +465,8 @@ def Save_Game():
         print("Error in save game")
     return
 
+
+
 # input prompt to ask the user for positioning placement of the buildings 
 # turns ends only if valid building and position is inputted
 # validation shown at the top of the screen for a few seconds
@@ -549,14 +552,56 @@ def get_user_input():
         pygame.display.flip()
         pygame.time.wait(30)
 
+def loadScoreBackground():
+    background_image = pygame.image.load("background/background.jpeg")
+    background_image = pygame.transform.scale(background_image, (width, height))
+    return background_image
+
+
 # display the leaderboard score
 def show_score():
     try:
         from save_game import game_details
-        board,leaderboard,variables = game_details()
-        return leaderboard
-    except:
+        board, leaderboard, variables = game_details()
+        # Assuming leaderboard is a dictionary
+        leaderboard_items_list = list(leaderboard.items())
+
+        big_title_font = pygame.font.Font(None, 60)  # Choose a larger font size for the main text
+        title_font = pygame.font.Font(None, 72)  # Choose an even larger font size for the titles
+
+        while True:
+            screen.fill(black)
+            screen.blit(loadScoreBackground(), (0, 0))
+
+            # Center the text on the screen
+            header_text = title_font.render("Ngee Ann City", True, white)
+            header_x = (screen.get_width() - header_text.get_width()) // 2
+            screen.blit(header_text, (header_x, 20))  # Adjust the vertical position
+
+            subheader_text = title_font.render("High Scores", True, white)
+            subheader_x = (screen.get_width() - subheader_text.get_width()) // 2
+            screen.blit(subheader_text, (subheader_x, 70))  # Adjust the vertical position
+
+            # Center the main text on the screen
+            text_y = (screen.get_height() - big_title_font.get_height()) // 3
+
+            rank = 1
+            for key, value in leaderboard_items_list:
+                score_text = big_title_font.render(f"{rank}: {key} {value}PTS", True, white)
+
+                # Center the text horizontally
+                text_x = (screen.get_width() - score_text.get_width()) // 2
+
+                screen.blit(score_text, (text_x, text_y))
+                text_y += 60  # Adjust the vertical spacing between scores
+                rank += 1
+
+            pygame.display.flip()
+
+    except IOError:
         print("Leaderboard scores  not found")
+
+
 
 
 # main code for the whole program to detect button clicks in the main menu
