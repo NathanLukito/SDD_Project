@@ -19,7 +19,6 @@ board = []
 pygame.init()
 
 
-# retriving the images and storing the names into a list for automation
 def loadBuildings():
     for i in buildings:
         images[i] = pygame.transform.scale(pygame.image.load('buildings/' + i + '.png'),(sqSize,sqSize))
@@ -46,7 +45,6 @@ def draw_exit_button():
     pygame.draw.rect(screen, exit_game_color, exit_game_rect)
     screen.blit(exit_game_text, (exit_game_rect.centerx - exit_game_text.get_width() // 2, exit_game_rect.centery - exit_game_text.get_height() // 2))
 
-# drawing and displaying of the number of coins in the main game
 def showCoins():
     font = pygame.font.Font(None, 36)
     text_content = "Coins:%d" % (coins)
@@ -136,7 +134,6 @@ def loadTitle():
     title_rect = title_image.get_rect(topleft=(screen.get_width()//2 - title_image.get_width() // 2, 50))
     return title_image,title_rect
 
-# drawing of the main game 20x20 board with the other items in the main game
 def drawBoard(selectedSquare):
     screen.fill(black)
     colors = [pygame.Color('white'), pygame.Color('gray')]
@@ -314,6 +311,7 @@ def new_game(load = False):
     global coins
     global turns
     global board
+    global coins
     if load:
         try:
             from save_game import game_details
@@ -356,6 +354,7 @@ def new_game(load = False):
                                     y = int(position[1]) - 1
                                     board[x][y] = buildings[i]
                                     coins -= 1
+                                    turns += 1
                                     
                         
                 else:
