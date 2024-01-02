@@ -7,7 +7,7 @@ black = (0, 0, 0)
 select = (255, 0, 0)
 coins = 16
 points = 0
-
+turns = 1
 images = {}
 buildings = ["R","I","C","O","Ro"]
 alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -24,6 +24,46 @@ class Player:
         self.name = name
         self.coins = coins
         self.score = score
+
+#Load save game button images - liwei
+save_game_btn_img = pygame.image.load("buttons/save.png")
+
+#Save game button - Liwei
+class save_game_button():
+    def __init__(self, x_percent, y_percent, image, scale):
+        width = image.get_width()
+        height = image.get_height()
+
+        # Calculate the x and y coordinates based on percentages
+        self.rect = pygame.Rect(0, 0, int(width * scale), int(height * scale))
+        self.rect.topright = (
+            int((pygame.display.Info().current_w * x_percent / 100) - self.rect.width),
+            int((pygame.display.Info().current_h * y_percent / 100)),
+        )
+
+        # Scale the image
+        self.image = pygame.transform.scale(image, self.rect.size)
+        self.clicked = False
+
+    def draw(self, surface):
+        action = False
+        # get mouse position
+        pos = pygame.mouse.get_pos()
+
+        # check mouseover and clicked conditions
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] == 1 and not self.clicked:
+                self.clicked = True
+                action = True
+
+        if pygame.mouse.get_pressed()[0] == 0:
+            self.clicked = False
+
+        # draw button on screen
+        surface.blit(self.image, self.rect.topleft)
+
+        return action
+
 
 def loadBuildings():
     for i in buildings:
@@ -51,6 +91,9 @@ exit_game_text = pygame.font.Font(None, 36).render("Exit", True, white)
 def draw_exit_button():
     pygame.draw.rect(screen, exit_game_color, exit_game_rect)
     screen.blit(exit_game_text, (exit_game_rect.centerx - exit_game_text.get_width() // 2, exit_game_rect.centery - exit_game_text.get_height() // 2))
+
+# create instance of save game button - liwei
+save_game_btn = save_game_button(100, 0, save_game_btn_img, 0.15)
 
 def showCoins():
 
@@ -133,6 +176,12 @@ def loadTitle():
     title_rect = title_image.get_rect(topleft=(screen.get_width()//2 - title_image.get_width() // 2, 50))
     return title_image,title_rect
 
+#show turns - liwei
+text_font =pygame.font.SysFont(None, 36)
+def showTurns(text,font,text_col,x,y):
+    img = font.render(text,True,text_col)
+    screen.blit(img,(x,y))
+
 def drawBoard(selectedSquare):
     screen.fill(black)
     colors = [pygame.Color('white'), pygame.Color('gray')]
@@ -148,6 +197,9 @@ def drawBoard(selectedSquare):
             pygame.draw.rect(screen, color, rect)
     drawBuildings(screen, board)
     draw_exit_button()
+    if save_game_btn.draw(screen): #-liwei
+        print("Game saved")
+    showTurns("Turn:"+str(turns),text_font, (255,255,255),200,87)#Liwei
     showCoins()
     residential_rect,industry_rect,commercial_rect,park_rect,road_rect = showBuildings()
     pygame.display.flip()
@@ -260,6 +312,7 @@ def new_game(load = False):
     selectedSquare = None
     global board
     global coins
+    global turns
     if load:
         try:
             from save_game import game_details
@@ -292,6 +345,7 @@ def new_game(load = False):
                                     y = int(position[1]) - 1
                                     board[x][y] = buildings[i]
                                     coins -= 1
+                                    turns += 1
                                     
                         
                 else:
