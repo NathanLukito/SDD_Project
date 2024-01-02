@@ -3,6 +3,7 @@ import pygame
 import os
 import sys
 import random
+import time
 
 #initiating of simple constant game variables
 grids = 20
@@ -18,6 +19,45 @@ alphabet = "abcdefghijklmnopqrstuvwxyz"
 board = []
 pygame.init()
 
+
+#Create saved game btn - Liwei
+class SaveGameButton:
+    def __init__(self, x_percent, y_percent, image, scale):
+        width = image.get_width()
+        height = image.get_height()
+
+        # Calculate the x and y coordinates based on percentages
+        self.rect = pygame.Rect(0, 0, int(width * scale), int(height * scale))
+        self.rect.topright = (
+            int((pygame.display.Info().current_w * x_percent / 100) - self.rect.width),
+            int((pygame.display.Info().current_h * y_percent / 100)),
+        )
+
+        # Scale the image
+        self.image = pygame.transform.scale(image, self.rect.size)
+        self.clicked = False
+
+    def draw(self, surface):
+        action = False
+        # get mouse position
+        pos = pygame.mouse.get_pos()
+
+        # check mouseover and clicked conditions
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] == 1 and not self.clicked:
+                self.clicked = True
+                action = True
+
+        if pygame.mouse.get_pressed()[0] == 0:
+            self.clicked = False
+
+        # draw button on screen
+        surface.blit(self.image, self.rect.topleft)
+
+        return action
+    
+save_game_btn_img = pygame.image.load('buttons/save.png')
+save_game_btn = SaveGameButton(90, 10, save_game_btn_img, 0.15)
 
 def loadBuildings():
     for i in buildings:
@@ -50,6 +90,10 @@ def showCoins():
     text_content = "Coins:%d" % (coins)
     text_surface = font.render(text_content, True, (255, 255, 255))
     screen.blit(text_surface, (exit_game_rect.centerx - exit_game_text.get_width(), (exit_game_rect.centery - exit_game_text.get_height() // 2)+65))
+
+def drawText(text,font,text_col,x,y):
+    img = font.render(text,True,text_col)
+    screen.blit(img,(x,y))
 
 # loading drawing and displaying the buildings that are available on the left side of the screen of the main game
 def showBuildings():
@@ -149,7 +193,11 @@ def drawBoard(selectedSquare):
             pygame.draw.rect(screen, color, rect)
     drawBuildings(screen, board)
     draw_exit_button()
+    if save_game_btn.draw(screen):#Liwei
+            print("Game Saved")
     showCoins()
+    drawText("Turn:"+str(turns),pygame.font.SysFont(None,26),(255,255,255),150,87) # show the number of turn - liwei
+    drawText("Score:"+str(points),pygame.font.SysFont(None,26),(255,255,255),240,87) #show the number of points - Liwei
     residential_rect,industry_rect,commercial_rect,park_rect,road_rect = showBuildings()
     pygame.display.flip()
 
@@ -289,11 +337,12 @@ def initialRandomBuilding():
                 if building1_rect.collidepoint(mouse_x, mouse_y):
                     position = get_user_input()
                     x = alphabet.index(position[0].lower())
-                    y = int(position[1]) - 1
+                    y = int(position[1:]) - 1
                     board[x][y] = random_building_names[0]
                     running = False
                 elif building2_rect.collidepoint(mouse_x, mouse_y):
                     position = get_user_input()
+                    print(position)
                     x = alphabet.index(position[0].lower())
                     y = int(position[1]) - 1
                     board[x][y] = random_building_names[1]
@@ -347,11 +396,12 @@ def new_game(load = False):
                 for i in range(len(building_rects)):
                     if building_rects[i].collidepoint(mouse_x, mouse_y):
                         position = get_user_input()
+                        print(position)
                         if position != None:
                             if coins > 0:
                                 if checkBuildingPosition(position,i):
                                     x = alphabet.index(position[0].lower()) 
-                                    y = int(position[1]) - 1
+                                    y = int(position[1:]) - 1
                                     board[x][y] = buildings[i]
                                     coins -= 1
                                     turns += 1
@@ -361,8 +411,9 @@ def new_game(load = False):
                     selectedSquare = (col, row)
 
         calculatePoints()
+        if save_game_btn.draw(screen):#Liwei
+            print("Game Saved")
         showCoins()
-        turns += 1
         if (checkGameFinish()):
             score = calculatePoints()
             break
@@ -390,7 +441,7 @@ def checkBuildingPosition(position,i):
         for jj in range(len(board[j])):
             if board[j][jj] != "--":
                 x = alphabet.index(position[0].lower())
-                y = int(position[1]) - 1
+                y = int(position[1:]) - 1
                 if (board[x-1][y] != ("--" or "Ro")) or (board[x+1][y] != ("--" or "Ro")) or (board[x][y-1] != ("--" or "Ro")) or (board[x][y+1] != ("--" or "Ro")):
                     return True
                 else:
@@ -413,6 +464,8 @@ def Save_Game():
     except:
         print("Error in save game")
     return
+
+
 
 # input prompt to ask the user for positioning placement of the buildings 
 # turns ends only if valid building and position is inputted
@@ -455,7 +508,7 @@ def get_user_input():
                 color = color_active if active else color_inactive
                 if turns != 1:
                     if confirm_button.collidepoint(event.pos):
-                        if len(text) == 2 and text[0].isalpha() and text[1].isdigit():
+                        if (len(text) >=2 and len(text) <= 3) and text[0].isalpha() and text[1:].isdigit():
                             return text
                         else:
                             print("Invalid input. Please enter a letter followed by a number.")
@@ -463,20 +516,20 @@ def get_user_input():
                         return None
                 else:
                     if confirm_button.collidepoint(event.pos):
-                        if len(text) == 2 and text[0].isalpha() and text[1].isdigit():
+                        if (len(text) >=2 and len(text) <= 3) and text[0].isalpha() and text[1:].isdigit():
                             return text
                         else:
                             print("Invalid input. Please enter a letter followed by a number.")
             if event.type == pygame.KEYDOWN:
                 if active:
                     if event.key == pygame.K_RETURN:
-                        if len(text) == 2 and text[0].isalpha() and text[1].isdigit():
+                        if (len(text) >=2 and len(text) <= 3) and text[0].isalpha() and text[1:].isdigit():
                             return text
                         else:
                             print("Invalid input. Please enter a letter followed by a number.")
                     elif event.key == pygame.K_BACKSPACE:
                         text = text[:-1]
-                    elif len(text) < 2:
+                    elif len(text) < 3:
                         text += event.unicode
 
         pygame.draw.rect(screen, (255, 255, 255), input_box)
