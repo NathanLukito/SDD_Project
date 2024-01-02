@@ -3,6 +3,7 @@ import pygame
 import os
 import sys
 import random
+import time
 
 #initiating of simple constant game variables
 grids = 20
@@ -364,7 +365,6 @@ def new_game(load = False):
 
         calculatePoints()
         showCoins()
-        turns += 1
         if (checkGameFinish()):
             score = calculatePoints()
             break
@@ -415,6 +415,8 @@ def Save_Game():
     except:
         print("Error in save game")
     return
+
+
 
 # input prompt to ask the user for positioning placement of the buildings 
 # turns ends only if valid building and position is inputted
