@@ -249,63 +249,60 @@ def calculatePoints():
 
     for i in range(len(board)):
         for x in range(len(board[i])):
-            if board[i][x] == 'Re':
-                add_points(i, x + 1, 'In', 1)
-                add_points(i, x - 1, 'In', 1)
-                add_points(i + 1, x, 'In', 1)
-                add_points(i - 1, x, 'In', 1)
-                add_points(i - 1, x - 1, 'In', 1)
-                add_points(i - 1, x + 1, 'In', 1)
-                add_points(i + 1, x - 1, 'In', 1)
-                add_points(i + 1, x + 1, 'In', 1)
-                add_points(i, x + 1, 'Re', 1)
-                add_points(i, x - 1, 'Re', 1)
-                add_points(i + 1, x, 'Re', 1)
-                add_points(i - 1, x, 'Re', 1)
-                add_points(i, x + 1, 'Co', 1)
-                add_points(i, x - 1, 'Co', 1)
-                add_points(i + 1, x, 'Co', 1)
-                add_points(i - 1, x, 'Co', 1)
-                add_points(i, x + 1, 'Pa', 2)
-                add_points(i, x - 1, 'Pa', 2)
-                add_points(i + 1, x, 'Pa', 2)
-                add_points(i - 1, x, 'Pa', 2)
+            if board[i][x] == 'R':
+                add_points(i, x + 1, 'I', 1)
+                add_points(i, x - 1, 'I', 1)
+                add_points(i + 1, x, 'I', 1)
+                add_points(i - 1, x, 'I', 1)
+                add_points(i - 1, x - 1, 'I', 1)
+                add_points(i - 1, x + 1, 'I', 1)
+                add_points(i + 1, x - 1, 'I', 1)
+                add_points(i + 1, x + 1, 'I', 1)
+                add_points(i, x + 1, 'R', 1)
+                add_points(i, x - 1, 'R', 1)
+                add_points(i + 1, x, 'R', 1)
+                add_points(i - 1, x, 'R', 1)
+                add_points(i, x + 1, 'C', 1)
+                add_points(i, x - 1, 'C', 1)
+                add_points(i + 1, x, 'C', 1)
+                add_points(i - 1, x, 'C', 1)
+                add_points(i, x + 1, 'O', 2)
+                add_points(i, x - 1, 'O', 2)
+                add_points(i + 1, x, 'O', 2)
+                add_points(i - 1, x, 'O', 2)
 
-            if board[i][x] == 'In':
+            if board[i][x] == 'I':
                 turn_points += 1
-                add_coins(i, x + 1, 'Re', 1)
-                add_coins(i, x - 1, 'Re', 1)
-                add_coins(i + 1, x, 'Re', 1)
-                add_coins(i - 1, x, 'Re', 1)
+                add_coins(i, x + 1, 'R', 1)
+                add_coins(i, x - 1, 'R', 1)
+                add_coins(i + 1, x, 'R', 1)
+                add_coins(i - 1, x, 'R', 1)
 
-            if board[i][x] == 'Co':
-                add_points(i, x + 1, 'Co', 1)
-                add_points(i, x - 1, 'Co', 1)
-                add_points(i + 1, x, 'Co', 1)
-                add_points(i - 1, x, 'Co', 1)
+            if board[i][x] == 'C':
+                add_points(i, x + 1, 'C', 1)
+                add_points(i, x - 1, 'C', 1)
+                add_points(i + 1, x, 'C', 1)
+                add_points(i - 1, x, 'C', 1)
 
-                add_coins(i, x + 1, 'Re', 1)
-                add_coins(i, x - 1, 'Re', 1)
-                add_coins(i + 1, x, 'Re', 1)
-                add_coins(i - 1, x, 'Re', 1)
+                add_coins(i, x + 1, 'R', 1)
+                add_coins(i, x - 1, 'R', 1)
+                add_coins(i + 1, x, 'R', 1)
+                add_coins(i - 1, x, 'R', 1)
 
-            if board[i][x] == 'Pa':
-                add_points(i, x + 1, 'Pa', 1)
-                add_points(i, x - 1, 'Pa', 1)
-                add_points(i + 1, x, 'Pa', 1)
-                add_points(i - 1, x, 'Pa', 1)
+            if board[i][x] == 'O':
+                add_points(i, x + 1, 'O', 1)
+                add_points(i, x - 1, 'O', 1)
+                add_points(i + 1, x, 'O', 1)
+                add_points(i - 1, x, 'O', 1)
 
             if board[i][x] == 'Ro':
                 for a in range(cols):
                     add_points(i, x + a, 'Ro', 1)
             else:
                 pass
-    global points
-    global coins
 
-    points += turn_points
-    coins += turn_coins
-    return
+
+    return turn_points, turn_coins
 
 # call upon the building list and remove Road and place onto the main screen to click and place for first turn ONLY
 def initialRandomBuilding():
@@ -404,12 +401,15 @@ def new_game(load = False):
                                     board[x][y] = buildings[i]
                                     coins -= 1
                                     turns += 1
-                                    
-                        
+                                    turn_points,turn_coins = calculatePoints()
+                                    points += turn_points
+                                    coins += turn_coins
+                                    print(points)
+
+
                 else:
                     selectedSquare = (col, row)
 
-        calculatePoints()
         if save_game_btn.draw(screen):#Liwei
             print("Game Saved")
         showCoins()
