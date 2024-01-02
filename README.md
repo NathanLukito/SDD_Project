@@ -17,9 +17,6 @@ Variables:
 - exit_game_color (tuple): RGB color value for the exit button.
 - exit_game_text (pygame.Surface): Rendered text for the exit button.
 
-Classes:
-- Building: A building class that contains the building type, cost, and its coordinates on the board.
-- Player: A player class that conatins the name of the player, the number of coins the player has and their score.
 
 Functions:
 

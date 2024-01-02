@@ -11,26 +11,13 @@ black = (0, 0, 0)
 select = (255, 0, 0)
 coins = 16
 points = 0
-turns = 1
+turns = 0
 images = {}
 buildings = ["R","I","C","O","Ro"]
 alphabet = "abcdefghijklmnopqrstuvwxyz"
 board = []
 pygame.init()
 
-#initiating class for ???
-class Building:
-    def __init__(self, building_type, row, col, cost = 1):
-        self.building_type = building_type
-        self.row = row
-        self.col = col
-        self.cost = cost
-
-class Player:
-    def __init__(self, name, coins = 16, score = 0):
-        self.name = name
-        self.coins = coins
-        self.score = score
 
 #Create saved game btn - Liwei
 class SaveGameButton:
@@ -170,8 +157,8 @@ def showBuildings():
 
 # drawing the buildings into the 20x20 grid of the game after every turn 
 def drawBuildings(screen, board):
-    for row in range(grids):
-        for col in range(grids):
+    for row in range(len(board)):
+        for col in range(len(board[row])):
             building = board[row][col]
             if building != '--':
                 x = offset_x + col * sqSize
@@ -237,6 +224,7 @@ def drawMenu():
     pygame.display.flip()
     return start_button_rect,load_button_rect,high_scores_button_rect,exit_button_rect
 
+
 # documentation for points calculation here
 def calculatePoints():
     turn_points = 0
@@ -259,8 +247,8 @@ def calculatePoints():
         else:
             pass
 
-    for i in range(rows):
-        for x in range(cols):
+    for i in range(len(board)):
+        for x in range(len(board[i])):
             if board[i][x] == 'Re':
                 add_points(i, x + 1, 'In', 1)
                 add_points(i, x - 1, 'In', 1)
@@ -321,7 +309,7 @@ def calculatePoints():
 
 # call upon the building list and remove Road and place onto the main screen to click and place for first turn ONLY
 def initialRandomBuilding():
-    random_building_names = random.sample(list(images.keys())[:4], 2)
+    random_building_names = random.sample(list(images.keys()), 2)
     center_x = screen.get_width() // 2
     center_y = screen.get_height() // 2
     width = 512
@@ -366,7 +354,6 @@ def initialRandomBuilding():
 # detection of mouseclicks and board interaction for selecting squares and for placing of buildings, exit and saving of the game
 # turn calculation is every successful building placement not the while loop
 def new_game(load = False):
-    player = Player("JoonHueay")
     selectedSquare = None
     global coins
     global turns
@@ -375,8 +362,12 @@ def new_game(load = False):
     if load:
         try:
             from save_game import game_details
-            board = game_details()
-        except:
+            board,leaderboard,variables = game_details()
+            turns = variables["turn"]
+            coins = variables["coins"]
+            points = variables["points"]
+
+        except IOError:
             print("No saved game")
             pass
     else:
@@ -402,7 +393,6 @@ def new_game(load = False):
                     return
                 for i in range(len(building_rects)):
                     if building_rects[i].collidepoint(mouse_x, mouse_y):
-                        print(board)
                         position = get_user_input()
                         if position != None:
                             if coins > 0:
@@ -449,14 +439,10 @@ def checkBuildingPosition(position,i):
             if board[j][jj] != "--":
                 x = alphabet.index(position[0].lower())
                 y = int(position[1]) - 1
-                if i != 4:
-                    if (board[x-1][y] != ("--" or "Ro")) or (board[x+1][y] != ("--" or "Ro")) or (board[x][y-1] != ("--" or "Ro")) or (board[x][y+1] != ("--" or "Ro")):
-                        return True
-                    else:
-                        return False
-                else:
+                if (board[x-1][y] != ("--" or "Ro")) or (board[x+1][y] != ("--" or "Ro")) or (board[x][y-1] != ("--" or "Ro")) or (board[x][y+1] != ("--" or "Ro")):
                     return True
-
+                else:
+                    return False
     return True
 
 # saving of the main game
