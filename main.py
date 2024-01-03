@@ -1,11 +1,27 @@
 # importing of necessary python libraries needed
-import pygame
+try:
+    from pip._internal import main as pip
+    pip(['install', '--user', 'playsound==1.2.2'])
+    pip(['install', '--user', 'pygame==2.5.2'])
+    pip(['install', '--user', 'random'])
+    pip(['install', '--user', 'time'])
+    pip(['install', '--user','threading'])
+    from playsound import playsound
+    import pygame
+    import random
+except:
+    pass
 import os
 import sys
-import random
 import time
-
+import threading
 #initiating of simple constant game variables
+
+def loopSound():
+    pass
+    while True:
+        playsound('TheWeekendWhip(Ninjago_MastersofSpinjitzuTheme).wav', block=True)
+
 grids = 20
 white = (255, 255, 255)
 black = (0, 0, 0)
@@ -409,7 +425,7 @@ def new_game(load = False):
                 for i in range(len(building_rects)):
                     if building_rects[i].collidepoint(mouse_x, mouse_y):
                         position = get_user_input()
-                        print(position)
+
                         if position != None:
                             if coins > 0:
                                 if checkBuildingPosition(position, i):
@@ -425,7 +441,6 @@ def new_game(load = False):
                                     building1_rect, building2_rect, random_buildings = RandomBuilding()
                                     building_rects = building1_rect, building2_rect
                                     calculatePoints()
-                                    print(points)
 
 
                 else:
@@ -433,14 +448,14 @@ def new_game(load = False):
 
         if save_game_btn.draw(screen):#Liwei
             Save_Game(board)
-            print("Game saved")
-            print(board)
+
+
             return
         showCoins()
         if (checkGameFinish()):
-            score = calculatePoints()
+            calculatePoints()
             break
-    showEndScreen(score)
+    showEndScreen(points)
     return
 
 # check if the board is filled or if the player runs out of coins
@@ -450,12 +465,102 @@ def checkGameFinish():
             for ii in range(len(board[i])):
                 if board[i][ii] == "--":
                     return False
+    
     return True
 
 # displaying of end screen with score and whether the player qualifies for the leaderboard
 def showEndScreen(score):
-    # check qualify for leaderboard anot
-    return 
+    # Set up the fonts
+    big_title_font = pygame.font.Font(None, 60)
+    title_font = pygame.font.Font(None, 72)
+
+    # Initialize variables for text input
+    input_text = ""
+    input_rect = pygame.Rect((screen.get_width() - 300) // 2, 250, 300, 40)
+    input_active = False
+    color_inactive = pygame.Color('lightskyblue3')
+    color_active = pygame.Color('dodgerblue2')
+    color = color_inactive
+    font = pygame.font.Font(None, 32)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if input_rect.collidepoint(event.pos):
+                    input_active = not input_active
+                else:
+                    input_active = False
+                color = color_active if input_active else color_inactive
+                
+                # Check if the mouse click is within the region of the exit button
+                if exit_button_rect.collidepoint(event.pos):
+                  return
+            elif event.type == pygame.KEYDOWN:
+                if input_active:
+                    if event.key == pygame.K_RETURN:
+                        try:
+                            from save_game import game_details
+                            b,leaderboard,v = game_details()
+                            min_key = min(leaderboard, key=leaderboard.get)
+
+                            del leaderboard[min_key]
+
+                            leaderboard[input_text] = score
+                            with open("save_game.py","w") as file:
+                                file.write("def game_details():\n")
+                                file.write("    "+"board = "+str(b)+"\n")
+                                file.write("    "+"leaderboard = " + str(leaderboard) + "\n")
+                                file.write("    variables = "+str(v)+"\n")
+                                file.write("    "+"return board,leaderboard,variables")
+                                file.close()
+                        except:
+                            print("Error in save game")
+                        return 
+                    elif event.key == pygame.K_BACKSPACE:
+                        input_text = input_text[:-1]
+                    else:
+                        input_text += event.unicode
+
+        screen.fill(black)
+        screen.blit(loadScoreBackground(), (0, 0))
+        red = (255,0,0)
+        # Draw the exit button at the top-left of the screen
+        exit_button_rect = pygame.Rect(10, 10, 40, 40)
+        pygame.draw.rect(screen, red, exit_button_rect)
+        exit_text = big_title_font.render("X", True, white)
+        screen.blit(exit_text, (15, 15))
+
+        # Center the text on the screen
+        header_text = title_font.render("Game Over", True, white)
+        header_x = (screen.get_width() - header_text.get_width()) // 2
+        screen.blit(header_text, (header_x, 20))  # Adjust the vertical position
+
+        subheader_text = title_font.render(f"Your Score: {score}", True, white)
+        subheader_x = (screen.get_width() - subheader_text.get_width()) // 2
+        screen.blit(subheader_text, (subheader_x, 70))  # Adjust the vertical position
+
+        # Check if the score is greater than 10 to display the input text field
+        try:
+            from save_game import game_details
+            x,leaderboard,y = game_details()
+            if score >= min(leaderboard.values()):
+                input_label = big_title_font.render("You made it on the leaderboard! Enter your name:", True, white)
+                input_x = (screen.get_width() - input_label.get_width()) // 2
+                screen.blit(input_label, (input_x, 150))
+
+                # Draw the input text field
+                pygame.draw.rect(screen, color, input_rect, 2)
+                text_surface = font.render(input_text, True, white)
+                width = max(200, text_surface.get_width())
+                input_rect.w = width
+                screen.blit(text_surface, (input_rect.x+5, input_rect.y+5))
+        except IOError:
+            print("Error in endgame function")
+        pygame.display.flip()
+
 
 # for building placement whether the building placed meets the orthogonally adjacent requirement ( not for roads )
 # if the turn is 1 or board is empty, building can be placed anywhere
@@ -465,8 +570,11 @@ def checkBuildingPosition(position, i):
             if board[j][jj] != "--":
                 x = alphabet.index(position[0].lower())
                 y = int(position[1:]) - 1
-                if (board[x-1][y] != ("--" or "Ro")) or (board[x+1][y] != ("--" or "Ro")) or (board[x][y-1] != ("--" or "Ro")) or (board[x][y+1] != ("--" or "Ro")):
-                    return True
+                if board[x][y] == "--":
+                    if (board[x-1][y] != ("--" or "Ro")) or (board[x+1][y] != ("--" or "Ro")) or (board[x][y-1] != ("--" or "Ro")) or (board[x][y+1] != ("--" or "Ro")):
+                        return True
+                    else:
+                        return False
                 else:
                     return False
     return True
@@ -577,18 +685,34 @@ def loadScoreBackground():
 
 # display the leaderboard score
 def show_score():
+    print("Showing score") 
     try:
         from save_game import game_details
         board, leaderboard, variables = game_details()
         # Assuming leaderboard is a dictionary
-        leaderboard_items_list = list(leaderboard.items())
+        leaderboard_items_list = list(sorted(leaderboard.items(), key=lambda item: item[1], reverse=True))
 
         big_title_font = pygame.font.Font(None, 60)  # Choose a larger font size for the main text
         title_font = pygame.font.Font(None, 72)  # Choose an even larger font size for the titles
 
+        red = (255, 0, 0)  # RGB color representation for red
+
         while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if exit_button_rect.collidepoint(event.pos):
+                       return
             screen.fill(black)
             screen.blit(loadScoreBackground(), (0, 0))
+
+            # Exit button
+            exit_button_rect = pygame.Rect(10, 10, 40, 40)
+            pygame.draw.rect(screen, red, exit_button_rect)
+            exit_text = big_title_font.render("X", True, white)
+            screen.blit(exit_text, (15, 15))
 
             # Center the text on the screen
             header_text = title_font.render("Ngee Ann City", True, white)
@@ -603,6 +727,7 @@ def show_score():
             text_y = (screen.get_height() - big_title_font.get_height()) // 3
 
             rank = 1
+
             for key, value in leaderboard_items_list:
                 score_text = big_title_font.render(f"{rank}: {key} {value}PTS", True, white)
 
@@ -643,5 +768,11 @@ def main():
                 elif exit_button_rect.collidepoint(mouse_x,mouse_y):
                     running = False
                     pygame.quit()
-
+try:
+    loopThread = threading.Thread(target=loopSound, name='backgroundMusicThread')
+    loopThread.daemon = True # shut down music thread when the rest of the program exits
+    loopThread.start()
+    pass
+except:
+    pass
 main()
