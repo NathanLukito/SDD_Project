@@ -57,7 +57,7 @@ class SaveGameButton:
         return action
     
 save_game_btn_img = pygame.image.load('buttons/save.png')
-save_game_btn = SaveGameButton(90, 10, save_game_btn_img, 0.15)
+save_game_btn = SaveGameButton(70, 10, save_game_btn_img, 0.15)
 
 def loadBuildings():
     for i in buildings:
@@ -194,7 +194,8 @@ def drawBoard(selectedSquare):
     drawBuildings(screen, board)
     draw_exit_button()
     if save_game_btn.draw(screen):#Liwei
-            print("Game Saved")
+        Save_Game()
+
     showCoins()
     drawText("Turn:"+str(turns),pygame.font.SysFont(None,26),(255,255,255),150,87) # show the number of turn - liwei
     drawText("Score:"+str(points),pygame.font.SysFont(None,26),(255,255,255),240,87) #show the number of points - Liwei
@@ -412,7 +413,10 @@ def new_game(load = False):
 
         calculatePoints()
         if save_game_btn.draw(screen):#Liwei
-            print("Game Saved")
+            Save_Game(board)
+            print("Game saved")
+            print(board)
+            return
         showCoins()
         if (checkGameFinish()):
             score = calculatePoints()
@@ -450,15 +454,15 @@ def checkBuildingPosition(position,i):
 
 # saving of the main game
 # gathers the game variables and write them into a new python file for simplicity
-def Save_Game():
+def Save_Game(gameboard):
     try:
         from save_game import game_details
         board,leaderboard,variables = game_details()
         with open("save_game.py","w") as file:
             file.write("def game_details():\n")
-            file.write("    "+"board = "+str(board)+"\n")
+            file.write("    "+"board = "+str(gameboard)+"\n")
             file.write("    "+"leaderboard = "+str(leaderboard)+"\n")
-            file.write("    variables = {turn: " + str(turns) + ", points: " + str(points) + ", coins: " + str(coins) + "}\n")
+            file.write("    variables = {'turn': " + str(turns) + ", 'points': " + str(points) + ", 'coins': " + str(coins) + "}\n")
             file.write("    "+"return board,leaderboard,variables")
             file.close()
     except:
