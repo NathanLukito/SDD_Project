@@ -71,10 +71,10 @@ def loadBuildings():
         images[i] = pygame.transform.scale(pygame.image.load('buildings/' + i + '.png'),(sqSize,sqSize))
 
 # initiating the meanu menu buttons and screen dimensions with background
-start_button = pygame.image.load("buttons/start_button.jpeg")
-load_button = pygame.image.load("buttons/load_button.jpeg")
-high_scores_button = pygame.image.load("buttons/high_scores_button.jpeg")
-exit_button = pygame.image.load("buttons/exit_button.jpeg")
+start_button = pygame.image.load("buttons/start_button.png")
+load_button = pygame.image.load("buttons/load_button.png")
+high_scores_button = pygame.image.load("buttons/high_scores_button.png")
+exit_button = pygame.image.load("buttons/exit_button.png")
 
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 width, height = screen.get_width(), screen.get_height()
@@ -217,13 +217,15 @@ def drawMenu():
     screen.blit(title_image, title_rect)
     total_button_height = (start_button.get_height() + load_button.get_height() + high_scores_button.get_height() + exit_button.get_height())
 
-    start_y = (screen.get_height() - total_button_height) // 2
+    padding = 40
+    start_y = (screen.get_height() - total_button_height + padding) // 2
     center_x = screen.get_width() // 2
 
     start_button_rect = start_button.get_rect(topleft=(center_x - start_button.get_width() // 2, start_y))
-    load_button_rect = load_button.get_rect(topleft=(center_x - load_button.get_width() // 2, start_y + start_button.get_height()))
-    high_scores_button_rect = high_scores_button.get_rect(topleft=(center_x - high_scores_button.get_width() // 2, start_y + start_button.get_height() + load_button.get_height()))
-    exit_button_rect = exit_button.get_rect(topleft=(center_x - exit_button.get_width() // 2, start_y + start_button.get_height() + load_button.get_height() + high_scores_button.get_height()))
+    load_button_rect = load_button.get_rect(topleft=(center_x - load_button.get_width() // 2, start_y + start_button.get_height() + padding))
+    high_scores_button_rect = high_scores_button.get_rect(topleft=(center_x - high_scores_button.get_width() // 2, start_y + start_button.get_height() + load_button.get_height() + padding * 2))
+    exit_button_rect = exit_button.get_rect(topleft=(center_x - exit_button.get_width() // 2, start_y + start_button.get_height() + load_button.get_height() + high_scores_button.get_height() + padding * 3))
+
     screen.blit(start_button, start_button_rect)
     screen.blit(load_button, load_button_rect)
     screen.blit(high_scores_button, high_scores_button_rect)
