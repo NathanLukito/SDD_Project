@@ -446,6 +446,10 @@ def new_game(load = False):
                                     building1_rect, building2_rect, random_buildings = RandomBuilding()
                                     building_rects = building1_rect, building2_rect
                                     calculatePoints()
+                                else:
+                                    display_error_message("Invalid position, buildings must be orthogonally adjacent",screen)
+                                    drawBoard(selectedSquare)
+                                    building1_rect, building2_rect, random_buildings = RandomBuilding(random_buildings)
                         else:
                             drawBoard(selectedSquare)
                             building1_rect, building2_rect, random_buildings = RandomBuilding(random_buildings)
