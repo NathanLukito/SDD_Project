@@ -87,10 +87,10 @@ def loadBuildings():
         images[i] = pygame.transform.scale(pygame.image.load('buildings/' + i + '.png'),(sqSize,sqSize))
 
 # initiating the meanu menu buttons and screen dimensions with background
-start_button = pygame.image.load("buttons/start_button.jpeg")
-load_button = pygame.image.load("buttons/load_button.jpeg")
-high_scores_button = pygame.image.load("buttons/high_scores_button.jpeg")
-exit_button = pygame.image.load("buttons/exit_button.jpeg")
+start_button = pygame.image.load("buttons/start_button.png")
+load_button = pygame.image.load("buttons/load_button.png")
+high_scores_button = pygame.image.load("buttons/high_scores_button.png")
+exit_button = pygame.image.load("buttons/exit_button.png")
 
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 width, height = screen.get_width(), screen.get_height()
@@ -209,10 +209,7 @@ def drawBoard(selectedSquare):
             x = offset_x + col * sqSize
             y = offset_y + row * sqSize
             rect = pygame.Rect(x, y, sqSize, sqSize)
-            if (col, row) == selectedSquare:
-                color = select
-            else:
-                color = colors[((row + col) % 2)]
+            color = colors[((row + col) % 2)]
             pygame.draw.rect(screen, color, rect)
     drawBuildings(screen, board)
     draw_exit_button()
@@ -234,13 +231,15 @@ def drawMenu():
     screen.blit(title_image, title_rect)
     total_button_height = (start_button.get_height() + load_button.get_height() + high_scores_button.get_height() + exit_button.get_height())
 
-    start_y = (screen.get_height() - total_button_height) // 2
+    padding = 40
+    start_y = (screen.get_height() - total_button_height + padding) // 2
     center_x = screen.get_width() // 2
 
     start_button_rect = start_button.get_rect(topleft=(center_x - start_button.get_width() // 2, start_y))
-    load_button_rect = load_button.get_rect(topleft=(center_x - load_button.get_width() // 2, start_y + start_button.get_height()))
-    high_scores_button_rect = high_scores_button.get_rect(topleft=(center_x - high_scores_button.get_width() // 2, start_y + start_button.get_height() + load_button.get_height()))
-    exit_button_rect = exit_button.get_rect(topleft=(center_x - exit_button.get_width() // 2, start_y + start_button.get_height() + load_button.get_height() + high_scores_button.get_height()))
+    load_button_rect = load_button.get_rect(topleft=(center_x - load_button.get_width() // 2, start_y + start_button.get_height() + padding))
+    high_scores_button_rect = high_scores_button.get_rect(topleft=(center_x - high_scores_button.get_width() // 2, start_y + start_button.get_height() + load_button.get_height() + padding * 2))
+    exit_button_rect = exit_button.get_rect(topleft=(center_x - exit_button.get_width() // 2, start_y + start_button.get_height() + load_button.get_height() + high_scores_button.get_height() + padding * 3))
+
     screen.blit(start_button, start_button_rect)
     screen.blit(load_button, load_button_rect)
     screen.blit(high_scores_button, high_scores_button_rect)
@@ -386,6 +385,7 @@ def new_game(load = False):
     global turns
     global board
     global coins
+    margin_size = 5
     if load:
         try:
             from save_game import game_details
@@ -424,6 +424,7 @@ def new_game(load = False):
                     return
                 for i in range(len(building_rects)):
                     if building_rects[i].collidepoint(mouse_x, mouse_y):
+                        pygame.draw.rect(screen, (34,139,34), building_rects[i].inflate(margin_size * 2, margin_size * 2), 2)
                         position = get_user_input()
 
                         if position != None:
@@ -438,6 +439,7 @@ def new_game(load = False):
                                     points += turn_points
                                     coins += turn_coins
                                     drawBoard(selectedSquare)
+                                    building_rects[i].width = 0
                                     building1_rect, building2_rect, random_buildings = RandomBuilding()
                                     building_rects = building1_rect, building2_rect
                                     calculatePoints()
@@ -453,7 +455,7 @@ def new_game(load = False):
             return
         showCoins()
         if (checkGameFinish()):
-            calculatePoints()
+            score = calculatePoints()
             break
     showEndScreen(points)
     return
@@ -644,7 +646,7 @@ def get_user_input():
                     else:
                             print("Invalid input. Please enter a letter followed by a number.")
                 elif cancel_button.collidepoint(event.pos):
-                        return None
+                    return None
 
             if event.type == pygame.KEYDOWN:
                 if active:
@@ -660,7 +662,7 @@ def get_user_input():
 
         pygame.draw.rect(screen, (255, 255, 255), input_box)
         pygame.draw.rect(screen, color, input_box, 2)
-        title_surface = title_font.render("Enter Position", True, (255, 255, 255))
+        title_surface = title_font.render("Enter Position", True, (34,139,34))
         title_rect = title_surface.get_rect(center=(width // 2, input_box.top - 30))
         screen.blit(title_surface, title_rect)
         txt_surface = input_font.render(text, True, (0, 0, 0))
