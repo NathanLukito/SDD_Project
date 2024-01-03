@@ -193,10 +193,7 @@ def drawBoard(selectedSquare):
             x = offset_x + col * sqSize
             y = offset_y + row * sqSize
             rect = pygame.Rect(x, y, sqSize, sqSize)
-            if (col, row) == selectedSquare:
-                color = select
-            else:
-                color = colors[((row + col) % 2)]
+            color = colors[((row + col) % 2)]
             pygame.draw.rect(screen, color, rect)
     drawBuildings(screen, board)
     draw_exit_button()
@@ -371,6 +368,7 @@ def new_game(load = False):
     global turns
     global board
     global coins
+    margin_size = 5
     if load:
         try:
             from save_game import game_details
@@ -409,6 +407,7 @@ def new_game(load = False):
                     return
                 for i in range(len(building_rects)):
                     if building_rects[i].collidepoint(mouse_x, mouse_y):
+                        pygame.draw.rect(screen, (34,139,34), building_rects[i].inflate(margin_size * 2, margin_size * 2), 2)
                         position = get_user_input()
                         print(position)
                         if position != None:
@@ -423,12 +422,10 @@ def new_game(load = False):
                                     points += turn_points
                                     coins += turn_coins
                                     drawBoard(selectedSquare)
+                                    building_rects[i].width = 0
                                     building1_rect, building2_rect, random_buildings = RandomBuilding()
                                     building_rects = building1_rect, building2_rect
-                                    calculatePoints()
                                     print(points)
-
-
                 else:
                     selectedSquare = (col, row)
 
@@ -436,9 +433,8 @@ def new_game(load = False):
             print("Game Saved")
         showCoins()
         if (checkGameFinish()):
-            score = calculatePoints()
             break
-    showEndScreen(score)
+    showEndScreen(points)
     return
 
 # check if the board is filled or if the player runs out of coins
@@ -534,7 +530,7 @@ def get_user_input():
                     else:
                             print("Invalid input. Please enter a letter followed by a number.")
                 elif cancel_button.collidepoint(event.pos):
-                        return None
+                    return None
 
             if event.type == pygame.KEYDOWN:
                 if active:
@@ -550,7 +546,7 @@ def get_user_input():
 
         pygame.draw.rect(screen, (255, 255, 255), input_box)
         pygame.draw.rect(screen, color, input_box, 2)
-        title_surface = title_font.render("Enter Position", True, (255, 255, 255))
+        title_surface = title_font.render("Enter Position", True, (34,139,34))
         title_rect = title_surface.get_rect(center=(width // 2, input_box.top - 30))
         screen.blit(title_surface, title_rect)
         txt_surface = input_font.render(text, True, (0, 0, 0))
