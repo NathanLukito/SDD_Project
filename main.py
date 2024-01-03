@@ -470,6 +470,16 @@ def checkGameFinish():
     
     return True
 
+def display_error_message(message, screen):
+    error_font = pygame.font.Font(None, 36)
+    error_surface = error_font.render(message, True, (255, 0, 0))
+    error_rect = error_surface.get_rect(center=(screen.get_width() // 2, screen.get_height() // 3))
+    screen.blit(error_surface, error_rect)
+    pygame.display.flip()
+    pygame.time.delay(3000)
+    screen.fill((0, 0, 0))
+    pygame.display.flip()
+
 # displaying of end screen with score and whether the player qualifies for the leaderboard
 def showEndScreen(score):
     # Set up the fonts
@@ -644,9 +654,9 @@ def get_user_input():
                     if (len(text) >=2 and len(text) <= 3) and text[0].isalpha() and text[1:].isdigit():
                         return text
                     else:
-                        print("Invalid input. Please enter a letter followed by a number.")
+                        display_error_message("Invalid input. Please enter a letter followed by a number.",screen)
+                        return None
                 elif cancel_button.collidepoint(event.pos):
-                    print("cancel button clicked")
                     return None
 
             if event.type == pygame.KEYDOWN:
@@ -655,7 +665,8 @@ def get_user_input():
                         if (len(text) >=2 and len(text) <= 3) and text[0].isalpha() and text[1:].isdigit():
                             return text
                         else:
-                            print("Invalid input. Please enter a letter followed by a number.")
+                            display_error_message("Invalid input. Please enter a letter followed by a number.",screen)
+                            return None
                     elif event.key == pygame.K_BACKSPACE:
                         text = text[:-1]
                     elif len(text) < 3:
@@ -678,7 +689,6 @@ def get_user_input():
         screen.blit(cancel_text, cancel_rect)
 
         pygame.display.flip()
-        pygame.time.wait(30)
 
 def loadScoreBackground():
     background_image = pygame.image.load("background/background.jpeg")
