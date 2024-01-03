@@ -15,6 +15,13 @@ points = 0
 turns = 0
 images = {}
 buildings = ["R","I","C","O","Ro"]
+building_names = {
+    "R": "Residential",
+    "I": "Industrial",
+    "C": "Commercial",
+    "O": "Park",
+    "Ro": "Road"
+}
 alphabet = "abcdefghijklmnopqrstuvwxyz"
 board = []
 pygame.init()
@@ -199,10 +206,10 @@ def drawBoard(selectedSquare):
     showCoins()
     drawText("Turn:"+str(turns),pygame.font.SysFont(None,26),(255,255,255),150,87) # show the number of turn - liwei
     drawText("Score:"+str(points),pygame.font.SysFont(None,26),(255,255,255),240,87) #show the number of points - Liwei
-    residential_rect,industry_rect,commercial_rect,park_rect,road_rect = showBuildings()
+    #residential_rect,industry_rect,commercial_rect,park_rect,road_rect = showBuildings()
     pygame.display.flip()
 
-    return residential_rect,industry_rect,commercial_rect,park_rect,road_rect
+    return #residential_rect,industry_rect,commercial_rect,park_rect,road_rect
 
 #drawing and placing of the main menu items onto the main menu screen
 def drawMenu():
@@ -251,105 +258,106 @@ def calculatePoints():
 
     for i in range(len(board)):
         for x in range(len(board[i])):
-            if board[i][x] == 'Re':
-                add_points(i, x + 1, 'In', 1)
-                add_points(i, x - 1, 'In', 1)
-                add_points(i + 1, x, 'In', 1)
-                add_points(i - 1, x, 'In', 1)
-                add_points(i - 1, x - 1, 'In', 1)
-                add_points(i - 1, x + 1, 'In', 1)
-                add_points(i + 1, x - 1, 'In', 1)
-                add_points(i + 1, x + 1, 'In', 1)
-                add_points(i, x + 1, 'Re', 1)
-                add_points(i, x - 1, 'Re', 1)
-                add_points(i + 1, x, 'Re', 1)
-                add_points(i - 1, x, 'Re', 1)
-                add_points(i, x + 1, 'Co', 1)
-                add_points(i, x - 1, 'Co', 1)
-                add_points(i + 1, x, 'Co', 1)
-                add_points(i - 1, x, 'Co', 1)
-                add_points(i, x + 1, 'Pa', 2)
-                add_points(i, x - 1, 'Pa', 2)
-                add_points(i + 1, x, 'Pa', 2)
-                add_points(i - 1, x, 'Pa', 2)
+            if board[i][x] == 'R':
+                add_points(i, x + 1, 'I', 1)
+                add_points(i, x - 1, 'I', 1)
+                add_points(i + 1, x, 'I', 1)
+                add_points(i - 1, x, 'I', 1)
+                add_points(i - 1, x - 1, 'I', 1)
+                add_points(i - 1, x + 1, 'I', 1)
+                add_points(i + 1, x - 1, 'I', 1)
+                add_points(i + 1, x + 1, 'I', 1)
+                add_points(i, x + 1, 'R', 1)
+                add_points(i, x - 1, 'R', 1)
+                add_points(i + 1, x, 'R', 1)
+                add_points(i - 1, x, 'R', 1)
+                add_points(i, x + 1, 'C', 1)
+                add_points(i, x - 1, 'C', 1)
+                add_points(i + 1, x, 'C', 1)
+                add_points(i - 1, x, 'C', 1)
+                add_points(i, x + 1, 'O', 2)
+                add_points(i, x - 1, 'O', 2)
+                add_points(i + 1, x, 'O', 2)
+                add_points(i - 1, x, 'O', 2)
 
-            if board[i][x] == 'In':
+            if board[i][x] == 'I':
                 turn_points += 1
-                add_coins(i, x + 1, 'Re', 1)
-                add_coins(i, x - 1, 'Re', 1)
-                add_coins(i + 1, x, 'Re', 1)
-                add_coins(i - 1, x, 'Re', 1)
+                add_coins(i, x + 1, 'R', 1)
+                add_coins(i, x - 1, 'R', 1)
+                add_coins(i + 1, x, 'R', 1)
+                add_coins(i - 1, x, 'R', 1)
 
-            if board[i][x] == 'Co':
-                add_points(i, x + 1, 'Co', 1)
-                add_points(i, x - 1, 'Co', 1)
-                add_points(i + 1, x, 'Co', 1)
-                add_points(i - 1, x, 'Co', 1)
+            if board[i][x] == 'C':
+                add_points(i, x + 1, 'C', 1)
+                add_points(i, x - 1, 'C', 1)
+                add_points(i + 1, x, 'C', 1)
+                add_points(i - 1, x, 'C', 1)
 
-                add_coins(i, x + 1, 'Re', 1)
-                add_coins(i, x - 1, 'Re', 1)
-                add_coins(i + 1, x, 'Re', 1)
-                add_coins(i - 1, x, 'Re', 1)
+                add_coins(i, x + 1, 'R', 1)
+                add_coins(i, x - 1, 'R', 1)
+                add_coins(i + 1, x, 'R', 1)
+                add_coins(i - 1, x, 'R', 1)
 
-            if board[i][x] == 'Pa':
-                add_points(i, x + 1, 'Pa', 1)
-                add_points(i, x - 1, 'Pa', 1)
-                add_points(i + 1, x, 'Pa', 1)
-                add_points(i - 1, x, 'Pa', 1)
+            if board[i][x] == 'O':
+                add_points(i, x + 1, 'O', 1)
+                add_points(i, x - 1, 'O', 1)
+                add_points(i + 1, x, 'O', 1)
+                add_points(i - 1, x, 'O', 1)
 
             if board[i][x] == 'Ro':
                 for a in range(cols):
                     add_points(i, x + a, 'Ro', 1)
             else:
                 pass
-    global points
-    global coins
 
-    points += turn_points
-    coins += turn_coins
-    return
+
+    return turn_points, turn_coins
 
 # call upon the building list and remove Road and place onto the main screen to click and place for first turn ONLY
-def initialRandomBuilding():
+def RandomBuilding():
+    font = pygame.font.Font(None,36)
     random_building_names = random.sample(list(images.keys()), 2)
-    center_x = screen.get_width() // 2
-    center_y = screen.get_height() // 2
-    width = 512
-    height = 512
-    x = center_x - width // 2
-    y = center_y - height // 2
 
-    overlay = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
-    overlay.fill((0, 0, 0, 150))
-    screen.blit(overlay, (0, 0))
 
-    building1_rect = pygame.transform.scale(images[random_building_names[0]], (256, 256)).get_rect(topleft=(x + 50, y + 50))
-    building2_rect = pygame.transform.scale(images[random_building_names[1]], (256, 256)).get_rect(topleft=(x + 512, y + 50))
-    screen.blit(images[random_building_names[0]], building1_rect.topleft)
-    screen.blit(images[random_building_names[1]], building2_rect.topleft)
+    building1 = pygame.transform.scale(images[random_building_names[0]], (60, 60))
+    building1_rect = building1.get_rect()
+    building1_rect.topleft = (20, 150)
+    pygame.draw.rect(screen, (255,255,255), building1_rect)
+    screen.blit(building1, building1_rect)
+    building1_name = building_names[random_building_names[0]]
+    building1_name_surface = font.render(building1_name, True, (255,255,255))
+    screen.blit(building1_name_surface, (10,215))
+
+    building2 = pygame.transform.scale(images[random_building_names[1]], (60,60))
+    building2_rect = building2.get_rect()
+    building2_rect.topleft = (20, 170 + building1_rect.top - 40)
+    pygame.draw.rect(screen, (255,255,255), building2_rect)
+    screen.blit(building2, building2_rect)
+    building2_name = building_names[random_building_names[1]]
+    building2_name_surface = font.render(building2_name, True, (255,255,255))
+    screen.blit(building2_name_surface, (10, building2_rect.top + 65))
     pygame.display.flip()
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                if building1_rect.collidepoint(mouse_x, mouse_y):
-                    position = get_user_input()
-                    x = alphabet.index(position[0].lower())
-                    y = int(position[1:]) - 1
-                    board[x][y] = random_building_names[0]
-                    running = False
-                elif building2_rect.collidepoint(mouse_x, mouse_y):
-                    position = get_user_input()
-                    print(position)
-                    x = alphabet.index(position[0].lower())
-                    y = int(position[1]) - 1
-                    board[x][y] = random_building_names[1]
-                    running = False
-
-    return
+    # running = True
+    # while running:
+    #     for event in pygame.event.get():
+    #         if event.type == pygame.QUIT:
+    #             running = False
+    #         elif event.type == pygame.MOUSEBUTTONDOWN:
+    #             mouse_x, mouse_y = pygame.mouse.get_pos()
+    #             if building1_rect.collidepoint(mouse_x, mouse_y):
+    #                 position = get_user_input()
+    #                 x = alphabet.index(position[0].lower())
+    #                 y = int(position[1:]) - 1
+    #                 board[x][y] = random_building_names[0]
+    #                 running = False
+    #             elif building2_rect.collidepoint(mouse_x, mouse_y):
+    #                 position = get_user_input()
+    #                 print(position)
+    #                 x = alphabet.index(position[0].lower())
+    #                 y = int(position[1]) - 1
+    #                 board[x][y] = random_building_names[1]
+    #                 running = False
+    return building1_rect, building2_rect, random_building_names
 
 # main game logic
 # checks whether loading of game is needed if not create a new game
@@ -378,12 +386,16 @@ def new_game(load = False):
         coins = 16
         points = 0
         turns = 1
+    drawBoard(selectedSquare)
+    building1_rect, building2_rect, random_buildings = RandomBuilding()
+    building_rects = building1_rect, building2_rect
     while True:
-        residential_rect,industry_rect,commercial_rect,park_rect,road_rect = drawBoard(selectedSquare)
-        building_rects = [residential_rect,industry_rect,commercial_rect,park_rect,road_rect]
-        if turns == 1:
-            initialRandomBuilding()
-            turns += 1
+        #residential_rect,industry_rect,commercial_rect,park_rect,road_rect = drawBoard(selectedSquare)
+        #building_rects = [residential_rect,industry_rect,commercial_rect,park_rect,road_rect]
+
+        # if turns == 1:
+        #     RandomBuilding()
+        #     turns += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -400,18 +412,25 @@ def new_game(load = False):
                         print(position)
                         if position != None:
                             if coins > 0:
-                                if checkBuildingPosition(position,i):
+                                if checkBuildingPosition(position, i):
                                     x = alphabet.index(position[0].lower()) 
                                     y = int(position[1:]) - 1
-                                    board[x][y] = buildings[i]
+                                    board[x][y] = random_buildings[i]
                                     coins -= 1
                                     turns += 1
-                                    
-                        
+                                    turn_points,turn_coins = calculatePoints()
+                                    points += turn_points
+                                    coins += turn_coins
+                                    drawBoard(selectedSquare)
+                                    building1_rect, building2_rect, random_buildings = RandomBuilding()
+                                    building_rects = building1_rect, building2_rect
+                                    calculatePoints()
+                                    print(points)
+
+
                 else:
                     selectedSquare = (col, row)
 
-        calculatePoints()
         if save_game_btn.draw(screen):#Liwei
             Save_Game(board)
             print("Game saved")
@@ -440,7 +459,7 @@ def showEndScreen(score):
 
 # for building placement whether the building placed meets the orthogonally adjacent requirement ( not for roads )
 # if the turn is 1 or board is empty, building can be placed anywhere
-def checkBuildingPosition(position,i):
+def checkBuildingPosition(position, i):
     for j in range(len(board)):
         for jj in range(len(board[j])):
             if board[j][jj] != "--":
@@ -493,11 +512,11 @@ def get_user_input():
     confirm_text = pygame.font.Font(None, 28).render('Confirm', True, (255, 255, 255))
     confirm_rect = confirm_text.get_rect(center=confirm_button.center)
 
-    if turns != 1:
-        cancel_button = pygame.Rect(input_box.right - 80, input_box.bottom + 10, 80, 32)
-        cancel_color = pygame.Color('firebrick')
-        cancel_text = pygame.font.Font(None, 28).render('Cancel', True, (255, 255, 255))
-        cancel_rect = cancel_text.get_rect(center=cancel_button.center)
+
+    cancel_button = pygame.Rect(input_box.right - 80, input_box.bottom + 10, 80, 32)
+    cancel_color = pygame.Color('firebrick')
+    cancel_text = pygame.font.Font(None, 28).render('Cancel', True, (255, 255, 255))
+    cancel_rect = cancel_text.get_rect(center=cancel_button.center)
 
     while True:
         for event in pygame.event.get():
@@ -510,20 +529,15 @@ def get_user_input():
                 else:
                     active = False
                 color = color_active if active else color_inactive
-                if turns != 1:
-                    if confirm_button.collidepoint(event.pos):
-                        if (len(text) >=2 and len(text) <= 3) and text[0].isalpha() and text[1:].isdigit():
+
+                if confirm_button.collidepoint(event.pos):
+                    if (len(text) >=2 and len(text) <= 3) and text[0].isalpha() and text[1:].isdigit():
                             return text
-                        else:
+                    else:
                             print("Invalid input. Please enter a letter followed by a number.")
-                    elif cancel_button.collidepoint(event.pos):
+                elif cancel_button.collidepoint(event.pos):
                         return None
-                else:
-                    if confirm_button.collidepoint(event.pos):
-                        if (len(text) >=2 and len(text) <= 3) and text[0].isalpha() and text[1:].isdigit():
-                            return text
-                        else:
-                            print("Invalid input. Please enter a letter followed by a number.")
+
             if event.type == pygame.KEYDOWN:
                 if active:
                     if event.key == pygame.K_RETURN:
@@ -549,21 +563,62 @@ def get_user_input():
         pygame.draw.rect(screen, confirm_color, confirm_button)
         screen.blit(confirm_text, confirm_rect)
 
-        if turns != 1:
-            pygame.draw.rect(screen, cancel_color, cancel_button)
-            screen.blit(cancel_text, cancel_rect)
+        pygame.draw.rect(screen, cancel_color, cancel_button)
+        screen.blit(cancel_text, cancel_rect)
 
         pygame.display.flip()
         pygame.time.wait(30)
+
+def loadScoreBackground():
+    background_image = pygame.image.load("background/background.jpeg")
+    background_image = pygame.transform.scale(background_image, (width, height))
+    return background_image
+
 
 # display the leaderboard score
 def show_score():
     try:
         from save_game import game_details
-        board,leaderboard,variables = game_details()
-        return leaderboard
-    except:
+        board, leaderboard, variables = game_details()
+        # Assuming leaderboard is a dictionary
+        leaderboard_items_list = list(leaderboard.items())
+
+        big_title_font = pygame.font.Font(None, 60)  # Choose a larger font size for the main text
+        title_font = pygame.font.Font(None, 72)  # Choose an even larger font size for the titles
+
+        while True:
+            screen.fill(black)
+            screen.blit(loadScoreBackground(), (0, 0))
+
+            # Center the text on the screen
+            header_text = title_font.render("Ngee Ann City", True, white)
+            header_x = (screen.get_width() - header_text.get_width()) // 2
+            screen.blit(header_text, (header_x, 20))  # Adjust the vertical position
+
+            subheader_text = title_font.render("High Scores", True, white)
+            subheader_x = (screen.get_width() - subheader_text.get_width()) // 2
+            screen.blit(subheader_text, (subheader_x, 70))  # Adjust the vertical position
+
+            # Center the main text on the screen
+            text_y = (screen.get_height() - big_title_font.get_height()) // 3
+
+            rank = 1
+            for key, value in leaderboard_items_list:
+                score_text = big_title_font.render(f"{rank}: {key} {value}PTS", True, white)
+
+                # Center the text horizontally
+                text_x = (screen.get_width() - score_text.get_width()) // 2
+
+                screen.blit(score_text, (text_x, text_y))
+                text_y += 60  # Adjust the vertical spacing between scores
+                rank += 1
+
+            pygame.display.flip()
+
+    except IOError:
         print("Leaderboard scores  not found")
+
+
 
 
 # main code for the whole program to detect button clicks in the main menu
