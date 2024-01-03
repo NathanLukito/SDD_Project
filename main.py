@@ -20,7 +20,7 @@ import threading
 def loopSound():
     pass
     while True:
-        playsound('TheWeekendWhip(Ninjago_MastersofSpinjitzuTheme).wav', block=True)
+        playsound('background.wav', block=True)
 
 grids = 20 
 white = (255, 255, 255)
