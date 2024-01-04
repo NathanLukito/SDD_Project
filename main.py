@@ -11,6 +11,7 @@ try:
     import random
 except:
     pass
+from importlib import reload
 import os
 import sys
 import time
@@ -18,9 +19,9 @@ import threading
 #initiating of simple constant game variables
 
 def loopSound():
+   # while True:
+    #    playsound('background.wav', block=True)
     pass
-    while True:
-        playsound('TheWeekendWhip(Ninjago_MastersofSpinjitzuTheme).wav', block=True)
 
 grids = 20 
 white = (255, 255, 255)
@@ -43,7 +44,6 @@ board = []
 pygame.init()
 
 
-#Create saved game btn - Liwei
 class SaveGameButton:
     def __init__(self, x_percent, y_percent, image, scale):
         width = image.get_width()
@@ -80,7 +80,7 @@ class SaveGameButton:
         return action
     
 save_game_btn_img = pygame.image.load('buttons/save.png')
-save_game_btn = SaveGameButton(70, 10, save_game_btn_img, 0.15)
+save_game_btn = SaveGameButton(75, 10, save_game_btn_img, 0.15)
 
 def loadBuildings():
     for i in buildings:
@@ -109,10 +109,23 @@ def draw_exit_button():
     screen.blit(exit_game_text, (exit_game_rect.centerx - exit_game_text.get_width() // 2, exit_game_rect.centery - exit_game_text.get_height() // 2))
 
 def showCoins():
-    font = pygame.font.Font(None, 36)
-    text_content = "Coins:%d" % (coins)
-    text_surface = font.render(text_content, True, (255, 255, 255))
-    screen.blit(text_surface, (exit_game_rect.centerx - exit_game_text.get_width(), (exit_game_rect.centery - exit_game_text.get_height() // 2)+65))
+    font = pygame.font.Font(None, 20)
+
+    coins_text = "Coins:%d" % coins
+    turn_text = "Turn: %d" % turns
+    score_text = "Score: %d" % points
+
+    coins_surface = font.render(coins_text, True, (255, 255, 255))
+    turn_surface = font.render(turn_text, True, (255, 255, 255))
+    score_surface = font.render(score_text, True, (255, 255, 255))
+
+    # Adjust the Y-coordinate for each line to create a stacked effect
+    y_offset = 40
+    screen.blit(coins_surface, (exit_game_rect.centerx - coins_surface.get_width(), (exit_game_rect.centery - coins_surface.get_height() // 2) + y_offset))
+    y_offset += 30  # Increase Y-offset for the next line
+    screen.blit(turn_surface, (exit_game_rect.centerx - turn_surface.get_width(), (exit_game_rect.centery - turn_surface.get_height() // 2) + y_offset))
+    y_offset += 30  # Increase Y-offset for the next line
+    screen.blit(score_surface, (exit_game_rect.centerx - score_surface.get_width(), (exit_game_rect.centery - score_surface.get_height() // 2) + y_offset))
 
 def drawText(text,font,text_col,x,y):
     img = font.render(text,True,text_col)
@@ -237,8 +250,6 @@ def drawBoard(selectedSquare):
         Save_Game()
 
     showCoins()
-    drawText("Turn:"+str(turns),pygame.font.SysFont(None,26),(255,255,255),150,87) # show the number of turn - liwei
-    drawText("Score:"+str(points),pygame.font.SysFont(None,26),(255,255,255),240,87) #show the number of points - Liwei
     #residential_rect,industry_rect,commercial_rect,park_rect,road_rect = showBuildings()
     pygame.display.flip()
 
@@ -396,11 +407,14 @@ def new_game(load = False):
     margin_size = 5
     if load:
         try:
+            import save_game
+            reload(save_game)
             from save_game import game_details
             board,leaderboard,variables = game_details()
             turns = variables["turn"]
             coins = variables["coins"]
             points = variables["points"]
+            print(board)
 
         except IOError:
             print("No saved game")
@@ -433,6 +447,7 @@ def new_game(load = False):
                                 if checkBuildingPosition(position, i):
                                     x = alphabet.index(position[0].lower()) 
                                     y = int(position[1:]) - 1
+
                                     board[x][y] = random_buildings[i]
                                     coins -= 1
                                     turns += 1
@@ -444,6 +459,9 @@ def new_game(load = False):
                                     building1_rect, building2_rect, random_buildings = RandomBuilding()
                                     building_rects = building1_rect, building2_rect
                                     calculatePoints()
+                                else:
+                                    drawBoard(selectedSquare)
+                                    building1_rect, building2_rect, random_buildings = RandomBuilding(random_buildings)
                         else:
                             drawBoard(selectedSquare)
                             building1_rect, building2_rect, random_buildings = RandomBuilding(random_buildings)
@@ -512,6 +530,8 @@ def showEndScreen(score):
                 if input_active:
                     if event.key == pygame.K_RETURN:
                         try:
+                            import save_game
+                            reload(save_game)
                             from save_game import game_details
                             b,leaderboard,v = game_details()
                             min_key = min(leaderboard, key=leaderboard.get)
@@ -526,7 +546,7 @@ def showEndScreen(score):
                                 file.write("    variables = "+str(v)+"\n")
                                 file.write("    "+"return board,leaderboard,variables")
                                 file.close()
-                        except:
+                        except IOError:
                             print("Error in save game")
                         return 
                     elif event.key == pygame.K_BACKSPACE:
@@ -554,6 +574,8 @@ def showEndScreen(score):
 
         # Check if the score is greater than 10 to display the input text field
         try:
+            import save_game
+            reload(save_game)
             from save_game import game_details
             x,leaderboard,y = game_details()
             if score >= min(leaderboard.values()):
@@ -575,17 +597,25 @@ def showEndScreen(score):
 # for building placement whether the building placed meets the orthogonally adjacent requirement ( not for roads )
 # if the turn is 1 or board is empty, building can be placed anywhere
 def checkBuildingPosition(position, i):
+    x = alphabet.index(position[0].lower())
+    y = int(position[1:]) - 1
+    if y >= 20:
+        display_error_message("Please select a position in the board",screen)
+        return False
     for j in range(len(board)):
         for jj in range(len(board[j])):
             if board[j][jj] != "--":
-                x = alphabet.index(position[0].lower())
-                y = int(position[1:]) - 1
+              
                 if board[x][y] == "--":
                     if (board[x-1][y] != ("--" or "Ro")) or (board[x+1][y] != ("--" or "Ro")) or (board[x][y-1] != ("--" or "Ro")) or (board[x][y+1] != ("--" or "Ro")):
                         return True
                     else:
+                        display_error_message("Invalid position, buildings must be orthogonally adjacent",screen)
+
                         return False
                 else:
+                    display_error_message("There is already a building on the selected square",screen)
+
                     return False
     return True
 
@@ -593,6 +623,8 @@ def checkBuildingPosition(position, i):
 # gathers the game variables and write them into a new python file for simplicity
 def Save_Game(gameboard):
     try:
+        import save_game
+        reload(save_game)
         from save_game import game_details
         board,leaderboard,variables = game_details()
         with open("save_game.py","w") as file:
@@ -601,7 +633,7 @@ def Save_Game(gameboard):
             file.write("    "+"leaderboard = "+str(leaderboard)+"\n")
             file.write("    variables = {'turn': " + str(turns) + ", 'points': " + str(points) + ", 'coins': " + str(coins) + "}\n")
             file.write("    "+"return board,leaderboard,variables")
-            file.close()
+
     except:
         print("Error in save game")
     return
@@ -697,15 +729,17 @@ def loadScoreBackground():
 # display the leaderboard score
 def show_score():
     try:
+        import save_game
+        reload(save_game)
         from save_game import game_details
         board, leaderboard, variables = game_details()
         # Assuming leaderboard is a dictionary
         leaderboard_items_list = list(sorted(leaderboard.items(), key=lambda item: item[1], reverse=True))
 
-        big_title_font = pygame.font.Font(None, 60)  # Choose a larger font size for the main text
-        title_font = pygame.font.Font(None, 72)  # Choose an even larger font size for the titles
+        big_title_font = pygame.font.Font(None, 60) 
+        title_font = pygame.font.Font(None, 72)  
 
-        red = (255, 0, 0)  # RGB color representation for red
+        red = (255, 0, 0)  
 
         while True:
             for event in pygame.event.get():
@@ -734,7 +768,7 @@ def show_score():
             screen.blit(subheader_text, (subheader_x, 70))  # Adjust the vertical position
 
             # Center the main text on the screen
-            text_y = (screen.get_height() - big_title_font.get_height()) // 3
+            text_y = (screen.get_height() - big_title_font.get_height()) // 4
 
             rank = 1
 
