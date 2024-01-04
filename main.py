@@ -249,28 +249,34 @@ def drawMenu():
     return start_button_rect,load_button_rect,high_scores_button_rect,exit_button_rect
 
 
-# documentation for points calculation here
+# Calculates the number of points and coins earned in the current turn
+# Loop through each position in the board, if the position is a building
+# Check for other buildings around the position referencing the game scope building mechanics
+# Ff the buildings are placed in a position to generate points or coins, the turn_points and turn_coins are updated
 def calculatePoints():
     turn_points = 0
     turn_coins = 0
     rows = len(board)
     cols = len(board[0])
+    #Check if the position is out of the board
     def check_position(i, x):
         return 0 <= i < rows and 0 <= x < cols
 
+    #If the position has the specified building, add points 
     def add_points(i, x, building, points):
         if check_position(i, x) and board[i][x] == building:
             nonlocal turn_points
             turn_points += points
         else:
             pass
+    #If the position has the specified building, add coins
     def add_coins(i, x, building, coins):
         if check_position(i, x) and board[i][x] == building:
             nonlocal turn_coins
             turn_coins += coins
         else:
             pass
-
+    
     for i in range(len(board)):
         for x in range(len(board[i])):
             if board[i][x] == 'R':
@@ -367,7 +373,6 @@ def new_game(load = False):
     global coins
     global turns
     global board
-    global coins
     margin_size = 5
     if load:
         try:
