@@ -20,9 +20,9 @@ import threading
 def loopSound():
     pass
     while True:
-        playsound('TheWeekendWhip(Ninjago_MastersofSpinjitzuTheme).wav', block=True)
+        playsound('background.wav', block=True)
 
-grids = 20
+grids = 20 
 white = (255, 255, 255)
 black = (0, 0, 0)
 select = (255, 0, 0)
@@ -329,13 +329,18 @@ def calculatePoints():
     return turn_points, turn_coins
 
 # call upon the building list and remove Road and place onto the main screen to click and place for first turn ONLY
-def RandomBuilding():
+def RandomBuilding(randombuildings = None):
+
     font = pygame.font.Font(None,36)
-    random_building_names = random.sample(list(images.keys()), 2)
 
-
+    if randombuildings != None:
+       random_building_names = randombuildings
+    else:
+        random_building_names = random.sample(list(images.keys()), 2)
     building1 = pygame.transform.scale(images[random_building_names[0]], (60, 60))
+    building2 = pygame.transform.scale(images[random_building_names[1]], (60,60))
     building1_rect = building1.get_rect()
+    building2_rect = building2.get_rect()
     building1_rect.topleft = (20, 150)
     pygame.draw.rect(screen, (255,255,255), building1_rect)
     screen.blit(building1, building1_rect)
@@ -343,8 +348,6 @@ def RandomBuilding():
     building1_name_surface = font.render(building1_name, True, (255,255,255))
     screen.blit(building1_name_surface, (10,215))
 
-    building2 = pygame.transform.scale(images[random_building_names[1]], (60,60))
-    building2_rect = building2.get_rect()
     building2_rect.topleft = (20, 170 + building1_rect.top - 40)
     pygame.draw.rect(screen, (255,255,255), building2_rect)
     screen.blit(building2, building2_rect)
@@ -415,7 +418,6 @@ def new_game(load = False):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                #add one button for game saving @Liwei
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = event.pos
                 col = (mouse_x - offset_x) // sqSize
@@ -426,6 +428,7 @@ def new_game(load = False):
                     if building_rects[i].collidepoint(mouse_x, mouse_y):
                         pygame.draw.rect(screen, (34,139,34), building_rects[i].inflate(margin_size * 2, margin_size * 2), 2)
                         position = get_user_input()
+                        print(position)
 
                         if position != None:
                             if coins > 0:
@@ -443,19 +446,20 @@ def new_game(load = False):
                                     building1_rect, building2_rect, random_buildings = RandomBuilding()
                                     building_rects = building1_rect, building2_rect
                                     calculatePoints()
+                                else:
+                                    display_error_message("Invalid position, buildings must be orthogonally adjacent",screen)
+                                    drawBoard(selectedSquare)
+                                    building1_rect, building2_rect, random_buildings = RandomBuilding(random_buildings)
+                        else:
+                            drawBoard(selectedSquare)
+                            building1_rect, building2_rect, random_buildings = RandomBuilding(random_buildings)
 
 
-                else:
-                    selectedSquare = (col, row)
-
-        if save_game_btn.draw(screen):#Liwei
+        if save_game_btn.draw(screen):
             Save_Game(board)
-
-
             return
         showCoins()
         if (checkGameFinish()):
-            score = calculatePoints()
             break
     showEndScreen(points)
     return
@@ -469,6 +473,16 @@ def checkGameFinish():
                     return False
     
     return True
+
+def display_error_message(message, screen):
+    error_font = pygame.font.Font(None, 36)
+    error_surface = error_font.render(message, True, (255, 0, 0))
+    error_rect = error_surface.get_rect(center=(screen.get_width() // 2, screen.get_height() // 3))
+    screen.blit(error_surface, error_rect)
+    pygame.display.flip()
+    pygame.time.delay(3000)
+    screen.fill((0, 0, 0))
+    pygame.display.flip()
 
 # displaying of end screen with score and whether the player qualifies for the leaderboard
 def showEndScreen(score):
@@ -642,9 +656,10 @@ def get_user_input():
 
                 if confirm_button.collidepoint(event.pos):
                     if (len(text) >=2 and len(text) <= 3) and text[0].isalpha() and text[1:].isdigit():
-                            return text
+                        return text
                     else:
-                            print("Invalid input. Please enter a letter followed by a number.")
+                        display_error_message("Invalid input. Please enter a letter followed by a number.",screen)
+                        return None
                 elif cancel_button.collidepoint(event.pos):
                     return None
 
@@ -654,7 +669,8 @@ def get_user_input():
                         if (len(text) >=2 and len(text) <= 3) and text[0].isalpha() and text[1:].isdigit():
                             return text
                         else:
-                            print("Invalid input. Please enter a letter followed by a number.")
+                            display_error_message("Invalid input. Please enter a letter followed by a number.",screen)
+                            return None
                     elif event.key == pygame.K_BACKSPACE:
                         text = text[:-1]
                     elif len(text) < 3:
@@ -677,7 +693,6 @@ def get_user_input():
         screen.blit(cancel_text, cancel_rect)
 
         pygame.display.flip()
-        pygame.time.wait(30)
 
 def loadScoreBackground():
     background_image = pygame.image.load("background/background.jpeg")
