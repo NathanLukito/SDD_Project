@@ -355,26 +355,6 @@ def RandomBuilding(randombuildings = None):
     building2_name_surface = font.render(building2_name, True, (255,255,255))
     screen.blit(building2_name_surface, (10, building2_rect.top + 65))
     pygame.display.flip()
-    # running = True
-    # while running:
-    #     for event in pygame.event.get():
-    #         if event.type == pygame.QUIT:
-    #             running = False
-    #         elif event.type == pygame.MOUSEBUTTONDOWN:
-    #             mouse_x, mouse_y = pygame.mouse.get_pos()
-    #             if building1_rect.collidepoint(mouse_x, mouse_y):
-    #                 position = get_user_input()
-    #                 x = alphabet.index(position[0].lower())
-    #                 y = int(position[1:]) - 1
-    #                 board[x][y] = random_building_names[0]
-    #                 running = False
-    #             elif building2_rect.collidepoint(mouse_x, mouse_y):
-    #                 position = get_user_input()
-    #                 print(position)
-    #                 x = alphabet.index(position[0].lower())
-    #                 y = int(position[1]) - 1
-    #                 board[x][y] = random_building_names[1]
-    #                 running = False
     return building1_rect, building2_rect, random_building_names
 
 # main game logic
@@ -409,12 +389,6 @@ def new_game(load = False):
     building1_rect, building2_rect, random_buildings = RandomBuilding()
     building_rects = building1_rect, building2_rect
     while True:
-        #residential_rect,industry_rect,commercial_rect,park_rect,road_rect = drawBoard(selectedSquare)
-        #building_rects = [residential_rect,industry_rect,commercial_rect,park_rect,road_rect]
-
-        # if turns == 1:
-        #     RandomBuilding()
-        #     turns += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -428,7 +402,6 @@ def new_game(load = False):
                     if building_rects[i].collidepoint(mouse_x, mouse_y):
                         pygame.draw.rect(screen, (34,139,34), building_rects[i].inflate(margin_size * 2, margin_size * 2), 2)
                         position = get_user_input()
-                        print(position)
 
                         if position != None:
                             if coins > 0:
@@ -698,7 +671,6 @@ def loadScoreBackground():
 
 # display the leaderboard score
 def show_score():
-    print("Showing score") 
     try:
         from save_game import game_details
         board, leaderboard, variables = game_details()
