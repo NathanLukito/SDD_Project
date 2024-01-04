@@ -94,7 +94,7 @@ exit_button = pygame.image.load("buttons/exit_button.png")
 
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 width, height = screen.get_width(), screen.get_height()
-sqSize = min(width, height) // grids
+sqSize = min(width, height) // (grids +1)
 
 offset_x = (width - grids * sqSize) // 2
 offset_y = (height - grids * sqSize) // 2
@@ -201,6 +201,25 @@ def loadTitle():
     title_rect = title_image.get_rect(topleft=(screen.get_width()//2 - title_image.get_width() // 2, 50))
     return title_image,title_rect
 
+
+def draw_board_labels(screen, grids, sqSize, offset_x, offset_y):
+    font = pygame.font.SysFont(None, 24)  # You can adjust the font size as needed
+
+    # Draw column labels (letters)
+    for col in range(grids):
+        x = offset_x + col * sqSize + sqSize // 2 - 5
+        y = offset_y - 30
+        label = font.render(chr(ord('A') + col), True, (255, 255, 255))
+        screen.blit(label, (x, y))
+
+    # Draw row labels (numbers)
+    for row in range(grids):
+        x = offset_x - 30
+        y = offset_y + row * sqSize + sqSize // 2 - 10
+        label = font.render(str(row + 1), True, (255, 255, 255))
+        screen.blit(label, (x, y))
+
+
 def drawBoard(selectedSquare):
     screen.fill(black)
     colors = [pygame.Color('white'), pygame.Color('gray')]
@@ -211,6 +230,7 @@ def drawBoard(selectedSquare):
             rect = pygame.Rect(x, y, sqSize, sqSize)
             color = colors[((row + col) % 2)]
             pygame.draw.rect(screen, color, rect)
+    draw_board_labels(screen, grids, sqSize, offset_x, offset_y)
     drawBuildings(screen, board)
     draw_exit_button()
     if save_game_btn.draw(screen):#Liwei
