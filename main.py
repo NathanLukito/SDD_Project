@@ -20,8 +20,7 @@ import threading
 
 def loopSound():
    while True:
-       pass
-       #playsound('background.wav', block=True)
+       playsound('background.wav', block=True)
 
 grids = 20 
 white = (255, 255, 255)
