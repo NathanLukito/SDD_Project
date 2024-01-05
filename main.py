@@ -215,14 +215,14 @@ def loadTitle():
 
 # add board positions on the screen
 def draw_board_labels(screen, grids, sqSize, offset_x, offset_y):
-    font = pygame.font.SysFont(None, 24)  # You can adjust the font size as needed
-    # Draw row labels (numbers)
+    font = pygame.font.SysFont(None, 24)
+
     for row in range(grids):
         x = offset_x - 30
         y = offset_y + row * sqSize + sqSize // 2 - 10
         label = font.render(chr(ord('A') + row), True, (255, 255, 255))
         screen.blit(label, (x, y))
-    # Draw column labels (letters)
+
     for col in range(grids):
         x = offset_x + col * sqSize + sqSize // 2 - 5
         y = offset_y - 15
