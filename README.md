@@ -150,6 +150,10 @@ Usage:
 
 - Run the script to start the Ngee Ann City game.
 - Use the mouse to interact with the menu and game board.
+- Click on buildings and input position to place it on the board
+- Leaderboard viewing and overtakking
 - Click on the exit button to quit the game.
 - Able to interact with the main menu of the board
+- Exit game
+- Saving and loading of the game
 
