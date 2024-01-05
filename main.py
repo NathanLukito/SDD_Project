@@ -214,25 +214,23 @@ def loadTitle():
     title_rect = title_image.get_rect(topleft=(screen.get_width()//2 - title_image.get_width() // 2, 50))
     return title_image,title_rect
 
-
+# add board positions to the board e.g. alphabets and numbers
 def draw_board_labels(screen, grids, sqSize, offset_x, offset_y):
-    font = pygame.font.SysFont(None, 24)  # You can adjust the font size as needed
+    font = pygame.font.SysFont(None, 24) 
 
-    # Draw column labels (letters)
     for col in range(grids):
         x = offset_x + col * sqSize + sqSize // 2 - 5
         y = offset_y - 30
         label = font.render(chr(ord('A') + col), True, (255, 255, 255))
         screen.blit(label, (x, y))
 
-    # Draw row labels (numbers)
     for row in range(grids):
         x = offset_x - 30
         y = offset_y + row * sqSize + sqSize // 2 - 10
         label = font.render(str(row + 1), True, (255, 255, 255))
         screen.blit(label, (x, y))
 
-
+# draws the board on the screen, adds board labels and any buildings placed
 def drawBoard(selectedSquare):
     screen.fill(black)
     colors = [pygame.Color('white'), pygame.Color('gray')]
@@ -250,10 +248,9 @@ def drawBoard(selectedSquare):
         Save_Game()
 
     showCoins()
-    #residential_rect,industry_rect,commercial_rect,park_rect,road_rect = showBuildings()
     pygame.display.flip()
 
-    return #residential_rect,industry_rect,commercial_rect,park_rect,road_rect
+    return 
 
 #drawing and placing of the main menu items onto the main menu screen
 def drawMenu():
