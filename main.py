@@ -213,7 +213,7 @@ def loadTitle():
     title_rect = title_image.get_rect(topleft=(screen.get_width()//2 - title_image.get_width() // 2, 50))
     return title_image,title_rect
 
-
+# add board positions on the screen
 def draw_board_labels(screen, grids, sqSize, offset_x, offset_y):
     font = pygame.font.SysFont(None, 24)  # You can adjust the font size as needed
     # Draw row labels (numbers)
@@ -229,7 +229,7 @@ def draw_board_labels(screen, grids, sqSize, offset_x, offset_y):
         label = font.render(str(col + 1), True, (255, 255, 255))
         screen.blit(label, (x, y))
 
-
+# draws the board with position lables and buildings placed
 def drawBoard(selectedSquare):
     screen.fill(black)
     colors = [pygame.Color('white'), pygame.Color('gray')]

@@ -71,16 +71,19 @@ Functions:
 11. draw_board_labels Function
     Purpose: Renders alphabets and numbers to show the positions on the board
     Details: The alphabets start at A and ends at T while numbers start at 1 and ends at 20
-12. drawBoard Function
+12. draw_board_labels Function
+    Purpose: Renders alphabets and numbers to show the positions on the board
+    Details: The alphabets start at A and ends at T while numbers start at 1 and ends at 20
+13. drawBoard Function
     Purpose: Draws the game board on the main game screen.
     Details: Fills the screen with alternating color tiles to represent the game board and calls drawBuildings to render buildings on the board.
-13. drawMenu Function
+14. drawMenu Function
     Purpose: Draws the main menu screen with buttons and background.
     Details: Positions and draws buttons and a background image on the main menu screen.
-14. calculatePoints Function
+15. calculatePoints Function
     Purpose: Calculates points and coins based on the current state of the game board.
     Details: Analyzes the configuration of buildings on the board to determine the player's score and earned coins for the current turn.
-15. RandomBuilding Function
+16. RandomBuilding Function
     Purpose: Displays randomly selected building options for the player to choose from.
     Details: Renders and displays images and names of two randomly selected buildings, allowing the player to choose one for placement.
     Main Game Logic Overview
@@ -88,7 +91,7 @@ Functions:
     Drawing: Renders and displays various game elements, including the main menu, buildings, coins, and buttons.
     Mouse Interaction: Detects mouse clicks for selecting squares, placing buildings, and interacting with buttons (exit and save).
     Turn Calculation: Calculates points and coins after every successful building placement, not within the main game loop.
-16. new_game Function
+17. new_game Function
     Purpose: Initiates a new game or loads a saved game.
     Parameters:
     load (Boolean): If True, loads a saved game; if False, starts a new game.
@@ -98,10 +101,10 @@ Functions:
     turns: Tracks the number of turns in the game.
     board: Represents the game board with building configurations.
     margin_size: Sets the margin size for button inflation during mouse click feedback.
-17. checkGameFinish Function
+18. checkGameFinish Function
     Purpose: Checks if the game has finished (either the board is filled or the player runs out of coins).
     Returns: True if the game has finished, False otherwise.
-18. display_error_message Function
+19. display_error_message Function
     Purpose: Displays an error message on the screen and clears it after a delay.
     Parameters:
     message: The error message to display.
@@ -149,3 +152,4 @@ Usage:
 - Use the mouse to interact with the menu and game board.
 - Click on the exit button to quit the game.
 - Able to interact with the main menu of the board
+
