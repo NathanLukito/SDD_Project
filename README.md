@@ -15,7 +15,11 @@ Modules:
 Global Variables:
 - grids (int): The number of rows and columns on the game board.
 - white, black, select (tuple): RGB color values for white, black, and the selected square.
+- coins, points, turns (int): game details which will be overwritten when starting a new game or loading a game
 - images (dict): A dictionary to store and manage building piece images.
+- buildings (list): List of building names in short form
+- buildings_names (dict): Dictionary of building names with short form as key and the full name as value
+- alphabet (string): The alphabet to reference when finding board positions e.g.(f, 10)
 - board (list): A 2D list representing the initial state of the game board.
 - sqSize (int): The size of each square on the game board.
 - offset_x, offset_y (int): Offsets for centering the game board on the screen.
