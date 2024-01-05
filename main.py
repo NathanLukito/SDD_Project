@@ -107,11 +107,12 @@ def draw_exit_button():
     pygame.draw.rect(screen, exit_game_color, exit_game_rect)
     screen.blit(exit_game_text, (exit_game_rect.centerx - exit_game_text.get_width() // 2, exit_game_rect.centery - exit_game_text.get_height() // 2))
 
-def showCoins(score):
+def showCoins():
     font = pygame.font.Font(None, 20)
+
     coins_text = "Coins:%d" % coins
     turn_text = "Turn: %d" % turns
-    score_text = "Score: " + str(score) 
+    score_text = "Score: %d" % points
 
     coins_surface = font.render(coins_text, True, (255, 255, 255))
     turn_surface = font.render(turn_text, True, (255, 255, 255))
@@ -212,7 +213,7 @@ def loadTitle():
     title_rect = title_image.get_rect(topleft=(screen.get_width()//2 - title_image.get_width() // 2, 50))
     return title_image,title_rect
 
-
+# add board positions on the screen
 def draw_board_labels(screen, grids, sqSize, offset_x, offset_y):
     font = pygame.font.SysFont(None, 24)  # You can adjust the font size as needed
     # Draw row labels (numbers)
@@ -228,9 +229,7 @@ def draw_board_labels(screen, grids, sqSize, offset_x, offset_y):
         label = font.render(str(col + 1), True, (255, 255, 255))
         screen.blit(label, (x, y))
 
-
-
-
+# draws the board with position lables and buildings placed
 def drawBoard(selectedSquare):
     screen.fill(black)
     colors = [pygame.Color('white'), pygame.Color('gray')]
@@ -247,7 +246,7 @@ def drawBoard(selectedSquare):
     if save_game_btn.draw(screen):#Liwei
         Save_Game()
 
-    #residential_rect,industry_rect,commercial_rect,park_rect,road_rect = showBuildings()
+    showCoins()
     pygame.display.flip()
 
     return #residential_rect,industry_rect,commercial_rect,park_rect,road_rect
@@ -422,7 +421,6 @@ def new_game(load = False):
         points = 0
         turns = 1
     drawBoard(selectedSquare)
-    showCoins(points)
     building1_rect, building2_rect, random_buildings = RandomBuilding()
     building_rects = building1_rect, building2_rect
     while True:
@@ -453,25 +451,22 @@ def new_game(load = False):
                                     points += turn_points
                                     coins += turn_coins
                                     drawBoard(selectedSquare)
-                                    showCoins(points)
                                     building_rects[i].width = 0
                                     building1_rect, building2_rect, random_buildings = RandomBuilding()
                                     building_rects = building1_rect, building2_rect
                                     calculatePoints()
-                                    print(points)
                                 else:
                                     drawBoard(selectedSquare)
-                                    showCoins(points)
                                     building1_rect, building2_rect, random_buildings = RandomBuilding(random_buildings)
                         else:
                             drawBoard(selectedSquare)
-                            showCoins(points)
                             building1_rect, building2_rect, random_buildings = RandomBuilding(random_buildings)
 
 
         if save_game_btn.draw(screen):
             Save_Game(board)
             return
+        showCoins()
         if (checkGameFinish()):
             break
     showEndScreen(points)
@@ -600,7 +595,7 @@ def showEndScreen(score):
 def checkBuildingPosition(position, i):
     x = alphabet.index(position[0].lower())
     y = int(position[1:]) - 1
-    if y >= grids  or x >= grids - 1:
+    if y >= 20:
         display_error_message("Please select a position in the board",screen)
         return False
     for j in range(len(board)):
