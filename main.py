@@ -19,9 +19,8 @@ import threading
 #initiating of simple constant game variables
 
 def loopSound():
-   # while True:
-    #    playsound('background.wav', block=True)
-    pass
+   while True:
+       playsound('background.wav', block=True)
 
 grids = 20 
 white = (255, 255, 255)
